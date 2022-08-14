@@ -21,9 +21,6 @@
   * [Use Arduino Library Manager](#use-arduino-library-manager)
   * [Manual Install](#manual-install)
   * [VS Code & PlatformIO](#vs-code--platformio)
-* [Packages' Patches](#packages-patches)
-  * [1. For Portenta_H7 boards using Arduino IDE in Linux](#1-for-portenta_h7-boards-using-arduino-ide-in-linux)
-  * [2. To fix compile error relating to dns_gethostbyname and LwIP stack](#2-to-fix-compile-error-relating-to-dns_gethostbyname-and-lwip-stack)
 * [HOWTO Fix `Multiple Definitions` Linker Error](#howto-fix-multiple-definitions-linker-error) 
 * [Examples](#examples)
   * [1. AsyncHTTPRequest](examples/AsyncHTTPRequest)
@@ -357,8 +354,11 @@ char pass[] = "12345678";         // your network password (use for WPA, or use 
 Start AsyncHTTPRequest on RASPBERRY_PI_PICO_W with RP2040W CYW43439 WiFi
 AsyncTCP_RP2040W v1.0.0
 AsyncHTTPRequest_RP2040W v1.0.0
-Using mac index = 15
-Connected! IP address: 192.168.2.101
+Connecting to SSID: HueNet1
+SSID: HueNet1
+Local IP Address: 192.168.2.94
+signal strength (RSSI):-25 dBm
+
 Request sent
 **************************************
 abbreviation: EST
