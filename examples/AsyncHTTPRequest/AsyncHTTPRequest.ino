@@ -102,18 +102,12 @@ void printWifiStatus()
   IPAddress ip = WiFi.localIP();
   Serial.print("Local IP Address: ");
   Serial.println(ip);
-
-  // print the received signal strength:
-  long rssi = WiFi.RSSI();
-  Serial.print("signal strength (RSSI):");
-  Serial.print(rssi);
-  Serial.println(" dBm");
 }
 
 void setup() 
 {
   Serial.begin(115200);
-  while (!Serial);
+  while (!Serial && millis() < 5000);
   
   Serial.print("\nStart AsyncHTTPRequest on "); Serial.println(BOARD_NAME);
   Serial.println(ASYNCTCP_RP2040W_VERSION);

@@ -22,7 +22,7 @@
 #define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN             1000000
 
 // Select a test server address           
-const char GET_ServerAddress[] = "arduino.cc";
+const char GET_ServerAddress[] = "arduino.tips";
 
 // GET location
 String GET_Location = "/asciilogo.txt";
@@ -82,12 +82,6 @@ void printWifiStatus()
   IPAddress ip = WiFi.localIP();
   Serial.print("Local IP Address: ");
   Serial.println(ip);
-
-  // print the received signal strength:
-  long rssi = WiFi.RSSI();
-  Serial.print("signal strength (RSSI):");
-  Serial.print(rssi);
-  Serial.println(" dBm");
 }
 
 void setup() 

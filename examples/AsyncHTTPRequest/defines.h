@@ -24,7 +24,9 @@
   #error For RASPBERRY_PI_PICO_W only
 #endif
 
-char ssid[] = "your_ssid";        // your network SSID (name)
-char pass[] = "12345678";         // your network password (use for WPA, or use as key for WEP), length must be 8+
+char ssid[] = "HueNet1";        // your network SSID (name)
+char pass[] = "jenniqqs";         // your network password (use for WPA, or use as key for WEP), length must be 8+
+//char ssid[] = "your_ssid";        // your network SSID (name)
+//char pass[] = "12345678";         // your network password (use for WPA, or use as key for WEP), length must be 8+
 
 #endif    //defines_h
