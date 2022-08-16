@@ -15,11 +15,12 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   You should have received a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.  
  
-  Version: 1.0.0
+  Version: 1.0.1
   
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      14/08/2022 Initial coding for RP2040W with CYW43439 WiFi
+  1.0.1   K Hoang      15/08/2022 Fix bug in examples
  *****************************************************************************************************************************/
 
 #pragma once
@@ -59,13 +60,13 @@
   #define SHIELD_TYPE           "RP2040W CYW43439 WiFi"
 #endif
 
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION            "AsyncHTTPRequest_RP2040W v1.0.0"
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION            "AsyncHTTPRequest_RP2040W v1.0.1"
 
 #define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MAJOR      1
 #define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MINOR      0
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_PATCH      0
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_PATCH      1
 
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_INT        1000000
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_INT        1000001
 
 #include "AsyncTCP_RP2040W.h"
 

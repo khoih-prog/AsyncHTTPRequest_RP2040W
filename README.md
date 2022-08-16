@@ -178,170 +178,13 @@ Please take a look at other examples, as well.
 
 #### 1. File [AsyncHTTPRequest.ino](examples/AsyncHTTPRequest/AsyncHTTPRequest.ino)
 
-```cpp
-#include "defines.h"
-
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN_TARGET      "AsyncHTTPRequest_RP2040W v1.0.0"
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN             1000000
-
-// To be included only in main(), .ino with setup() to avoid `Multiple Definitions` Linker Error
-#include <AsyncHTTPRequest_RP2040W.h>         // https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W
-
-AsyncHTTPRequest request;
-
-int status = WL_IDLE_STATUS;
-
-void sendRequest()
-{
-  static bool requestOpenResult;
-  
-  if (request.readyState() == readyStateUnsent || request.readyState() == readyStateDone)
-  {
-    //requestOpenResult = request.open("GET", "http://worldtimeapi.org/api/timezone/Europe/London.txt");
-    requestOpenResult = request.open("GET", "http://worldtimeapi.org/api/timezone/America/Toronto.txt");
-    //requestOpenResult = request.open("GET", "http://213.188.196.246/api/timezone/America/Toronto.txt");
-    
-    if (requestOpenResult)
-    {
-      Serial.println("Request sent");
-      
-      // Only send() if open() returns true, or crash
-      request.send();
-    }
-    else
-    {
-      Serial.println("Can't send bad request");
-    }
-  }
-  else
-  {
-    Serial.println("Can't send request");
-  }
-}
-
-void requestCB(void* optParm, AsyncHTTPRequest* request, int readyState) 
-{
-  (void) optParm;
-  
-  if (readyState == readyStateDone) 
-  {
-    Serial.println("\n**************************************");
-    Serial.println(request->responseText());
-    Serial.println("**************************************");
-    
-    request->setDebug(false);
-  }
-}
-
-void printWifiStatus()
-{
-  // print the SSID of the network you're attached to:
-  Serial.print("SSID: ");
-  Serial.println(WiFi.SSID());
-
-  // print your board's IP address:
-  IPAddress ip = WiFi.localIP();
-  Serial.print("Local IP Address: ");
-  Serial.println(ip);
-
-  // print the received signal strength:
-  long rssi = WiFi.RSSI();
-  Serial.print("signal strength (RSSI):");
-  Serial.print(rssi);
-  Serial.println(" dBm");
-}
-
-void setup() 
-{
-  Serial.begin(115200);
-  while (!Serial);
-  
-  Serial.print("\nStart AsyncHTTPRequest on "); Serial.println(BOARD_NAME);
-  Serial.println(ASYNCTCP_RP2040W_VERSION);
-  Serial.println(ASYNC_HTTP_REQUEST_RP2040W_VERSION);
-
-#if defined(ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN)
-  if (ASYNC_HTTP_REQUEST_RP2040W_VERSION_INT < ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN)
-  {
-    Serial.print("Warning. Must use this example on Version equal or later than : ");
-    Serial.println(ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN_TARGET);
-  }
-#endif
-
-  ///////////////////////////////////
-  
-  // check for the WiFi module:
-  if (WiFi.status() == WL_NO_MODULE)
-  {
-    Serial.println("Communication with WiFi module failed!");
-    // don't continue
-    while (true);
-  }
-
-  Serial.print(F("Connecting to SSID: "));
-  Serial.println(ssid);
-
-  status = WiFi.begin(ssid, pass);
-
-  delay(1000);
-   
-  // attempt to connect to WiFi network
-  while ( status != WL_CONNECTED)
-  {
-    delay(500);
-        
-    // Connect to WPA/WPA2 network
-    status = WiFi.status();
-  }
-
-  printWifiStatus();
-
-  ///////////////////////////////////
-
-  request.setDebug(false);
-  
-  request.onReadyStateChange(requestCB);
-}
-
-void sendRequestRepeat()
-{
-  static unsigned long sendRequest_timeout = 0;
-
-#define SEND_REQUEST_INTERVAL     60000L
-
-  // sendRequest every SEND_REQUEST_INTERVAL (60) seconds: we don't need to sendRequest frequently
-  if ((millis() > sendRequest_timeout) || (sendRequest_timeout == 0))
-  {
-    sendRequest();
-    
-    sendRequest_timeout = millis() + SEND_REQUEST_INTERVAL;
-  }
-}
-
-void loop()
-{
-  sendRequestRepeat();
-}
-```
+https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/39eb61479ae868729b43ebb2c86bc11437fce2f8/examples/AsyncHTTPRequest/AsyncHTTPRequest.ino#L41-L177
 
 ---
 
 #### 2. File [defines.h](examples/AsyncHTTPRequest/defines.h)
 
-
-```cpp
-#ifndef defines_h
-#define defines_h
-
-#if !( defined(ARDUINO_RASPBERRY_PI_PICO_W) )
-  #error For RASPBERRY_PI_PICO_W only
-#endif
-
-char ssid[] = "your_ssid";        // your network SSID (name)
-char pass[] = "12345678";         // your network password (use for WPA, or use as key for WEP), length must be 8+
-
-#endif    //defines_h
-```
+https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/39eb61479ae868729b43ebb2c86bc11437fce2f8/examples/AsyncHTTPRequest/defines.h#L1-L30
 
 ---
 ---
@@ -351,50 +194,50 @@ char pass[] = "12345678";         // your network password (use for WPA, or use 
 #### 1. [AsyncHTTPRequest](examples/AsyncHTTPRequest) running on RASPBERRY_PI_PICO_W using CYW43439 WiFi
 
 ```
-Start AsyncHTTPRequest on RASPBERRY_PI_PICO_W with RP2040W CYW43439 WiFi
+
+Start AsyncHTTPRequest on RASPBERRY_PI_PICO_W
 AsyncTCP_RP2040W v1.0.0
-AsyncHTTPRequest_RP2040W v1.0.0
+AsyncHTTPRequest_RP2040W v1.0.1
 Connecting to SSID: HueNet1
 SSID: HueNet1
-Local IP Address: 192.168.2.94
-signal strength (RSSI):-25 dBm
-
-Request sent
-**************************************
-abbreviation: EST
-client_ip: aaa.bbb.ccc.ddd
-datetime: 2022-01-23T19:06:29.846071-05:00
-day_of_week: 0
-day_of_year: 23
-dst: false
-dst_from: 
-dst_offset: 0
-dst_until: 
-raw_offset: -18000
-timezone: America/Toronto
-unixtime: 1642982789
-utc_datetime: 2022-01-24T00:06:29.846071+00:00
-utc_offset: -05:00
-week_number: 3
-**************************************
+Local IP Address: 192.168.2.180
 Request sent
 
 **************************************
-abbreviation: EST
-client_ip: aaa.bbb.ccc.ddd
-datetime: 2022-01-23T19:08:29.871390-05:00
-day_of_week: 0
-day_of_year: 23
-dst: false
-dst_from: 
-dst_offset: 0
-dst_until: 
+abbreviation: EDT
+client_ip: 69.165.159.183
+datetime: 2022-08-15T21:53:32.353173-04:00
+day_of_week: 1
+day_of_year: 227
+dst: true
+dst_from: 2022-03-13T07:00:00+00:00
+dst_offset: 3600
+dst_until: 2022-11-06T06:00:00+00:00
 raw_offset: -18000
 timezone: America/Toronto
-unixtime: 1642982909
-utc_datetime: 2022-01-24T00:08:29.871390+00:00
-utc_offset: -05:00
-week_number: 3
+unixtime: 1660614812
+utc_datetime: 2022-08-16T01:53:32.353173+00:00
+utc_offset: -04:00
+week_number: 33
+**************************************
+Request sent
+
+**************************************
+abbreviation: EDT
+client_ip: 69.165.159.183
+datetime: 2022-08-15T21:54:32.316488-04:00
+day_of_week: 1
+day_of_year: 227
+dst: true
+dst_from: 2022-03-13T07:00:00+00:00
+dst_offset: 3600
+dst_until: 2022-11-06T06:00:00+00:00
+raw_offset: -18000
+timezone: America/Toronto
+unixtime: 1660614872
+utc_datetime: 2022-08-16T01:54:32.316488+00:00
+utc_offset: -04:00
+week_number: 33
 **************************************
 ```
 
@@ -405,11 +248,10 @@ week_number: 3
 ```
 Start AsyncDweetPOST on RASPBERRY_PI_PICO_W with RP2040W CYW43439 WiFi
 AsyncTCP_RP2040W v1.0.0
-AsyncHTTPRequest_RP2040W v1.0.0
+AsyncHTTPRequest_RP2040W v1.0.1
 Connecting to SSID: HueNet1
 SSID: HueNet1
-Local IP Address: 192.168.2.94
-signal strength (RSSI):-25 dBm
+Local IP Address: 192.168.2.180
 
 Making new POST request
 
@@ -426,13 +268,12 @@ Actual value: 88
 #### 3. [AsyncWebClientRepeating](examples/AsyncWebClientRepeating) running on RASPBERRY_PI_PICO_W using CYW43439 WiFi
 
 ```
-Start AsyncWebClientRepeating on RASPBERRY_PI_PICO_W with RP2040W CYW43439 WiFi
+Start AsyncWebClientRepeating on RASPBERRY_PI_PICO_W
 AsyncTCP_RP2040W v1.0.0
-AsyncHTTPRequest_RP2040W v1.0.0
+AsyncHTTPRequest_RP2040W v1.0.1
 Connecting to SSID: HueNet1
 SSID: HueNet1
-Local IP Address: 192.168.2.94
-signal strength (RSSI):-26 dBm
+Local IP Address: 192.168.2.180
 
 **************************************
 

@@ -11,14 +11,18 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
-  * [Initial Releases v1.0.0](#Initial-Releases-v100)
+  * [Release v1.0.1](#Release-v101)
+  * [Initial Release v1.0.0](#Initial-Release-v100)
 
 ---
 ---
 
 ## Changelog
 
+### Release v1.0.1
 
-### Initial Releases v1.0.0
+1. Fix bug in examples
+
+### Initial Release v1.0.0
 
 1. Initial coding to support **RASPBERRY_PI_PICO_W with CYW43439 WiFi**, using [**arduino-pico core v2.4.0+**](https://github.com/earlephilhower/arduino-pico)
