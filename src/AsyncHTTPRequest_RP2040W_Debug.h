@@ -13,14 +13,16 @@
   as published bythe Free Software Foundation, either version 3 of the License, or (at your option) any later version.
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.  
+  You should have received a copy of the GNU General Public License along with this program.  
+  If not, see <https://www.gnu.org/licenses/> 
  
-  Version: 1.0.1
+  Version: 1.1.0
   
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      14/08/2022 Initial coding for RP2040W with CYW43439 WiFi
   1.0.1   K Hoang      15/08/2022 Fix bug in examples
+  1.1.0    K Hoang     01/09/2022 Fix bug. Improve debug messages. Optimize code.
  *****************************************************************************************************************************/
 
 #pragma once

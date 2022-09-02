@@ -15,7 +15,7 @@ If you don't find anything, please [open a new issue](https://github.com/khoih-p
 Please ensure to specify the following:
 
 * Arduino IDE version (e.g. 1.8.19) or Platform.io version
-* `RP2040` Core Version (e.g. RP2040 core v2.4.0)
+* `RP2040` Core Version (e.g. RP2040 core v2.5.0)
 * `RP2040` Board type (e.g. RASPBERRY_PI_PICO_W)
 * Contextual information (e.g. what you were trying to achieve)
 * Simplest possible steps to reproduce
@@ -28,10 +28,10 @@ Please ensure to specify the following:
 
 ```
 Arduino IDE version: 1.8.19
-RP2040 core v2.4.0
+RP2040 core v2.5.0
 RASPBERRY_PI_PICO_W Module
 OS: Ubuntu 20.04 LTS
-Linux xy-Inspiron-3593 5.15.0-41-generic #44~20.04.1-Ubuntu SMP Fri Jun 24 13:27:29 UTC 2022 x86_64 x86_64 x86_64 GNU/Linux
+Linux xy-Inspiron-3593 5.15.0-46-generic #49~20.04.1-Ubuntu SMP Thu Aug 4 19:15:44 UTC 2022 x86_64 x86_64 x86_64 GNU/Linux
 
 Context:
 I encountered an endless loop while trying to connect to Local WiFi.
@@ -52,3 +52,4 @@ There are usually some outstanding feature requests in the [existing issues list
 ### Sending Pull Requests
 
 Pull Requests with changes and fixes are also welcome!
+

@@ -40,8 +40,12 @@
 
 #include "defines.h"
 
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN_TARGET      "AsyncHTTPRequest_RP2040W v1.0.0"
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN             1000000
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN_TARGET      "AsyncHTTPRequest_RP2040W v1.1.0"
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN             1001000
+
+// Level from 0-4
+#define ASYNC_HTTP_DEBUG_PORT     Serial
+#define _ASYNC_HTTP_LOGLEVEL_     2
 
 // To be included only in main(), .ino with setup() to avoid `Multiple Definitions` Linker Error
 #include <AsyncHTTPRequest_RP2040W.h>         // https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W
@@ -78,17 +82,21 @@ void sendRequest()
   }
 }
 
-void requestCB(void* optParm, AsyncHTTPRequest* request, int readyState) 
+void requestCB(void *optParm, AsyncHTTPRequest *request, int readyState)
 {
   (void) optParm;
-  
-  if (readyState == readyStateDone) 
+
+  if (readyState == readyStateDone)
   {
-    Serial.println("\n**************************************");
-    Serial.println(request->responseText());
-    Serial.println("**************************************");
-    
-    request->setDebug(false);
+    AHTTP_LOGWARN(F("\n**************************************"));
+    AHTTP_LOGWARN1(F("Response Code = "), request->responseHTTPString());
+
+    if (request->responseHTTPcode() == 200)
+    {
+      Serial.println(F("\n**************************************"));
+      Serial.println(request->responseText());
+      Serial.println(F("**************************************"));
+    }
   }
 }
 

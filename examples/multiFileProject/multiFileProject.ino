@@ -15,8 +15,12 @@
   #error For RASPBERRY_PI_PICO_W only
 #endif
 
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN_TARGET      "AsyncHTTPRequest_RP2040W v1.0.0"
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN             1000000
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN_TARGET      "AsyncHTTPRequest_RP2040W v1.1.0"
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN             1001000
+
+// Level from 0-4
+#define ASYNC_HTTP_DEBUG_PORT     Serial
+#define _ASYNC_HTTP_LOGLEVEL_     2
 
 #include "multiFileProject.h"
 
@@ -26,7 +30,7 @@
 void setup() 
 {
   Serial.begin(115200);
-  while (!Serial);
+  while (!Serial && millis() < 5000);
   
   Serial.println("\nStart multiFileProject");
   Serial.println(ASYNC_HTTP_REQUEST_RP2040W_VERSION);

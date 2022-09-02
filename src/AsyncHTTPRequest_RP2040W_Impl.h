@@ -13,14 +13,16 @@
   as published bythe Free Software Foundation, either version 3 of the License, or (at your option) any later version.
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.  
+  You should have received a copy of the GNU General Public License along with this program.  
+  If not, see <https://www.gnu.org/licenses/> 
  
-  Version: 1.0.1
+  Version: 1.1.0
   
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      14/08/2022 Initial coding for RP2040W with CYW43439 WiFi
   1.0.1   K Hoang      15/08/2022 Fix bug in examples
+  1.1.0    K Hoang     01/09/2022 Fix bug. Improve debug messages. Optimize code.
  *****************************************************************************************************************************/
  
 #pragma once
@@ -28,115 +30,115 @@
 #ifndef ASYNC_HTTP_REQUEST_RP2040W_IMPL_H
 #define ASYNC_HTTP_REQUEST_RP2040W_IMPL_H
 
-#define CANT_SEND_BAD_REQUEST       F("Can't send() bad request")
+#define CANT_SEND_BAD_REQUEST       ("Can't send() bad request")
 
 // Merge xbuf
 ////////////////////////////////////////////////////////////////////////////
 
-xbuf::xbuf(const uint16_t segSize) : _head(nullptr), _tail(nullptr), _used(0), _free(0), _offset(0) 
+xbuf::xbuf(const uint16_t segSize) : _head(nullptr), _tail(nullptr), _used(0), _free(0), _offset(0)
 {
   _segSize = (segSize + 3) & -4;//((segSize + 3) >> 2) << 2;
 }
 
 //*******************************************************************************************************************
-xbuf::~xbuf() 
+xbuf::~xbuf()
 {
   flush();
 }
 
 //*******************************************************************************************************************
-size_t xbuf::write(const uint8_t byte) 
+size_t xbuf::write(const uint8_t byte)
 {
   return write((uint8_t*) &byte, 1);
 }
 
 //*******************************************************************************************************************
-size_t xbuf::write(const char* buf) 
+size_t xbuf::write(const char* buf)
 {
   return write((uint8_t*)buf, strlen(buf));
 }
 
 //*******************************************************************************************************************
-size_t xbuf::write(const String& string) 
+size_t xbuf::write(const String& string)
 {
   return write((uint8_t*)string.c_str(), string.length());
 }
 
 //*******************************************************************************************************************
-size_t xbuf::write(const uint8_t* buf, const size_t len) 
+size_t xbuf::write(const uint8_t* buf, const size_t len)
 {
   size_t supply = len;
-  
-  while (supply) 
+
+  while (supply)
   {
-    if (!_free) 
+    if (!_free)
     {
       addSeg();
     }
-    
+
     size_t demand = _free < supply ? _free : supply;
     memcpy(_tail->data + ((_offset + _used) % _segSize), buf + (len - supply), demand);
     _free -= demand;
     _used += demand;
     supply -= demand;
   }
-  
+
   return len;
 }
 
 //*******************************************************************************************************************
-size_t xbuf::write(xbuf* buf, const size_t len) 
+size_t xbuf::write(xbuf* buf, const size_t len)
 {
   size_t supply = len;
-  
-  if (supply > buf->available()) 
+
+  if (supply > buf->available())
   {
     supply = buf->available();
   }
-  
+
   size_t read = 0;
-  
-  while (supply) 
+
+  while (supply)
   {
-    if (!_free) 
+    if (!_free)
     {
       addSeg();
     }
-    
+
     size_t demand = _free < supply ? _free : supply;
     read += buf->read(_tail->data + ((_offset + _used) % _segSize), demand);
     _free -= demand;
     _used += demand;
     supply -= demand;
   }
-  
+
   return read;
 }
 
 //*******************************************************************************************************************
-uint8_t xbuf::read() 
+uint8_t xbuf::read()
 {
   uint8_t byte = 0;
   read((uint8_t*) &byte, 1);
-  
+
   return byte;
 }
 
 //*******************************************************************************************************************
-uint8_t xbuf::peek() 
+uint8_t xbuf::peek()
 {
   uint8_t byte = 0;
   peek((uint8_t*) &byte, 1);
-  
+
   return byte;
 }
 
 //*******************************************************************************************************************
-size_t xbuf::read(uint8_t* buf, const size_t len) 
+size_t xbuf::read(uint8_t* buf, const size_t len)
 {
   size_t read = 0;
-  
-  while (read < len && _used) 
+
+  while (read < len && _used)
   {
     size_t supply = (_offset + _used) > _segSize ? _segSize - _offset : _used;
     size_t demand = len - read;
@@ -145,224 +147,224 @@ size_t xbuf::read(uint8_t* buf, const size_t len)
     _offset += chunk;
     _used -= chunk;
     read += chunk;
-    
-    if (_offset == _segSize) 
+
+    if (_offset == _segSize)
     {
       remSeg();
       _offset = 0;
     }
   }
-  
-  if ( ! _used) 
+
+  if ( ! _used)
   {
     flush();
   }
-  
+
   return read;
 }
 
 //*******************************************************************************************************************
-size_t xbuf::peek(uint8_t* buf, const size_t len) 
+size_t xbuf::peek(uint8_t* buf, const size_t len)
 {
   size_t read   = 0;
   xseg* seg     = _head;
   size_t offset = _offset;
   size_t used   = _used;
-  
-  while (read < len && used) 
+
+  while (read < len && used)
   {
     size_t supply = (offset + used) > _segSize ? _segSize - offset : used;
     size_t demand = len - read;
     size_t chunk  = supply < demand ? supply : demand;
-    
+
     memcpy(buf + read, seg->data + offset, chunk);
-    
+
     offset  += chunk;
     used    -= chunk;
     read    += chunk;
-    
-    if (offset == _segSize) 
+
+    if (offset == _segSize)
     {
       seg = seg->next;
       offset = 0;
     }
   }
-  
+
   return read;
 }
 
 //*******************************************************************************************************************
-size_t xbuf::available() 
+size_t xbuf::available()
 {
   return _used;
 }
 
 //*******************************************************************************************************************
-int xbuf::indexOf(const char target, const size_t begin) 
+int xbuf::indexOf(const char target, const size_t begin)
 {
   char targetstr[2] = " ";
   targetstr[0] = target;
-  
+
   return indexOf(targetstr, begin);
 }
 
 //*******************************************************************************************************************
-int xbuf::indexOf(const char* target, const size_t begin) 
+int xbuf::indexOf(const char* target, const size_t begin)
 {
   size_t targetLen = strlen(target);
-  
-  if (targetLen > _segSize || targetLen > _used) 
+
+  if (targetLen > _segSize || targetLen > _used)
     return -1;
-    
+
   size_t searchPos = _offset + begin;
   size_t searchEnd = _offset + _used - targetLen;
-  
-  if (searchPos > searchEnd) 
+
+  if (searchPos > searchEnd)
     return -1;
-    
+
   size_t searchSeg = searchPos / _segSize;
   xseg* seg = _head;
-  
-  while (searchSeg) 
+
+  while (searchSeg)
   {
     seg = seg->next;
     searchSeg --;
   }
-  
+
   size_t segPos = searchPos % _segSize;
-  
-  while (searchPos <= searchEnd) 
+
+  while (searchPos <= searchEnd)
   {
     size_t compLen = targetLen;
-    
-    if (compLen <= (_segSize - segPos)) 
+
+    if (compLen <= (_segSize - segPos))
     {
-      if (memcmp(target, seg->data + segPos, compLen) == 0) 
+      if (memcmp(target, seg->data + segPos, compLen) == 0)
       {
         return searchPos - _offset;
       }
     }
-    else 
+    else
     {
       size_t compLen = _segSize - segPos;
-      
-      if (memcmp(target, seg->data + segPos, compLen) == 0) 
+
+      if (memcmp(target, seg->data + segPos, compLen) == 0)
       {
         compLen = targetLen - compLen;
-        
-        if (memcmp(target + targetLen - compLen, seg->next->data, compLen) == 0) 
+
+        if (memcmp(target + targetLen - compLen, seg->next->data, compLen) == 0)
         {
           return searchPos - _offset;
         }
       }
     }
-    
+
     searchPos++;
     segPos++;
-    
-    if (segPos == _segSize) 
+
+    if (segPos == _segSize)
     {
       seg = seg->next;
       segPos = 0;
     }
   }
-  
+
   return -1;
 }
 
 //*******************************************************************************************************************
-String xbuf::readStringUntil(const char target) 
+String xbuf::readStringUntil(const char target)
 {
   return readString(indexOf(target) + 1);
 }
 
 //*******************************************************************************************************************
-String xbuf::readStringUntil(const char* target) 
+String xbuf::readStringUntil(const char* target)
 {
   int index = indexOf(target);
-  
-  if (index < 0) 
+
+  if (index < 0)
     return String();
-    
+
   return readString(index + strlen(target));
 }
 
 //*******************************************************************************************************************
-String xbuf::readString(int endPos) 
+String xbuf::readString(int endPos)
 {
   String result;
-  
-  if ( ! result.reserve(endPos + 1)) 
+
+  if ( ! result.reserve(endPos + 1))
   {
     // KH, to remove
-    AHTTP_LOGDEBUG1("xbuf::readString: can't reserve size = ", endPos + 1);
+    //AHTTP_LOGERROR1(("xbuf::readString: can't reserve size ="), endPos + 1);
     ///////
-      
+
     return result;
   }
-  
+
   // KH, to remove
-    AHTTP_LOGDEBUG1("xbuf::readString: Reserved size = ", endPos + 1);
-    ///////
-  
-  if (endPos > _used) 
+  //AHTTP_LOGDEBUG1(("xbuf::readString: Reserved size ="), endPos + 1);
+  ///////
+
+  if (endPos > _used)
   {
     endPos = _used;
   }
-  
-  if (endPos > 0 && result.reserve(endPos + 1)) 
+
+  if (endPos > 0 && result.reserve(endPos + 1))
   {
-    while (endPos--) 
+    while (endPos--)
     {
       result += (char)_head->data[_offset++];
       _used--;
-      
-      if (_offset >= _segSize) 
+
+      if (_offset >= _segSize)
       {
         remSeg();
       }
     }
   }
-  
+
   return result;
 }
 
 //*******************************************************************************************************************
-String xbuf::peekString(int endPos) 
+String xbuf::peekString(int endPos)
 {
   String result;
-  
+
   xseg* seg     = _head;
   size_t offset = _offset;
-  
-  if (endPos > _used) 
+
+  if (endPos > _used)
   {
     endPos = _used;
   }
-  
-  if (endPos > 0 && result.reserve(endPos + 1)) 
+
+  if (endPos > 0 && result.reserve(endPos + 1))
   {
-    while (endPos--) 
+    while (endPos--)
     {
       result += (char)seg->data[offset++];
-      
-      if ( offset >= _segSize) 
+
+      if ( offset >= _segSize)
       {
         seg = seg->next;
         offset = 0;
       }
     }
   }
-  
+
   return result;
 }
 
 //*******************************************************************************************************************
-void xbuf::flush() 
+void xbuf::flush()
 {
-  while (_head) 
+  while (_head)
     remSeg();
-  
+
   _tail = nullptr;
   _offset = 0;
   _used = 0;
@@ -370,49 +372,53 @@ void xbuf::flush()
 }
 
 //*******************************************************************************************************************
-void xbuf::addSeg() 
+void xbuf::addSeg()
 {
-  if (_tail) 
+  if (_tail)
   {
     _tail->next = (xseg*) new uint32_t[_segSize / 4 + 1];
-    
+
     if (_tail->next == NULL)
-      AHTTP_LOGERROR("xbuf::addSeg: error new 1");
-    
-    // KH, Must check NULL here
-    _tail = _tail->next;
+    {
+      AHTTP_LOGERROR(("xbuf::addSeg: error new 1"));
+    }
+    else
+    {
+      // KH, Must check NULL here
+      _tail = _tail->next;
+    }
   }
-  else 
+  else
   {
     // KH, Must check NULL here
     _tail = _head = (xseg*) new uint32_t[_segSize / 4 + 1];
-    
+
     if (_tail == NULL)
-      AHTTP_LOGERROR("xbuf::addSeg: error new 2");
+      AHTTP_LOGERROR(("xbuf::addSeg: error new 2"));
   }
-  
+
   // KH, Must check NULL here
   if (_tail)
     _tail->next = nullptr;
-    
+
   _free += _segSize;
 }
 
 //*******************************************************************************************************************
-void xbuf::remSeg() 
+void xbuf::remSeg()
 {
-  if (_head) 
+  if (_head)
   {
     xseg *next = _head->next;
     delete[] (uint32_t*) _head;
     _head = next;
-    
-    if ( ! _head) 
+
+    if ( ! _head)
     {
       _tail = nullptr;
     }
   }
-  
+
   _offset = 0;
 }
 
@@ -451,7 +457,7 @@ void AsyncHTTPRequest::setDebug(bool debug)
 
     AHTTP_LOGDEBUG3("setDebug(", debug ? "on" : "off", ") version", ASYNC_HTTP_REQUEST_RP2040W_VERSION);
   }
-  
+
   _debug = debug;
 }
 
@@ -469,18 +475,18 @@ bool  AsyncHTTPRequest::open(const char* method, const char* URL)
   if (_readyState != readyStateUnsent && _readyState != readyStateDone)
   {
     AHTTP_LOGDEBUG("open: not ready");
-    
+
     return false;
   }
 
   _requestStartTime = millis();
-  
+
   SAFE_DELETE(_URL)
   SAFE_DELETE(_headers)
   SAFE_DELETE(_request)
   SAFE_DELETE(_response)
   SAFE_DELETE(_chunks)
-  
+
   _URL          = nullptr;
   _headers      = nullptr;
   _response     = nullptr;
@@ -489,10 +495,8 @@ bool  AsyncHTTPRequest::open(const char* method, const char* URL)
   _chunked      = false;
   _contentRead  = 0;
   _readyState   = readyStateUnsent;
-  
-  // New in v1.1.1
+
   _requestReadyToSend = false;
-  //////
 
   if (strcmp(method, "GET") == 0)
   {
@@ -502,7 +506,6 @@ bool  AsyncHTTPRequest::open(const char* method, const char* URL)
   {
     _HTTPmethod = HTTPmethodPOST;
   }
-  // New in v1.1.0
   else if (strcmp(method, "PUT") == 0)
   {
     _HTTPmethod = HTTPmethodPUT;
@@ -519,64 +522,60 @@ bool  AsyncHTTPRequest::open(const char* method, const char* URL)
   {
     _HTTPmethod = HTTPmethodHEAD;
   }
-  //////
   else
   {
     AHTTP_LOGDEBUG("open: Bad method");
-    
+
     return false;
   }
-
 
   if (!_parseURL(URL))
   {
     AHTTP_LOGDEBUG("open: error parsing URL");
-    
+
     return false;
   }
-  
+
   if ( _client && _client->connected() && (strcmp(_URL->host, _connectedHost) != 0 || _URL->port != _connectedPort))
   {
     AHTTP_LOGDEBUG("open: not connected");
-    
+
     return false;
   }
 
   char* hostName = new char[strlen(_URL->host) + 10];
-  
+
   if (hostName)
   {
     sprintf(hostName, "%s:%d", _URL->host, _URL->port);
     _addHeader("host", hostName);
-    
+
     AHTTP_LOGDEBUG1("open: connecting to hostname =", hostName);
-    
+
     SAFE_DELETE_ARRAY(hostName)
-    
+
     _lastActivity = millis();
-    
-    // New in v1.1.1
+
     _requestReadyToSend = true;
-    //////
-    
+
     return _connect();
   }
   else
   {
     AHTTP_LOGDEBUG("open: error alloc");
-    
+
     return false;
   }
 }
 //**************************************************************************************************************
-void AsyncHTTPRequest::onReadyStateChange(readyStateChangeCB cb, void* arg) 
+void AsyncHTTPRequest::onReadyStateChange(readyStateChangeCB cb, void* arg)
 {
   _readyStateChangeCB = cb;
   _readyStateChangeCBarg = arg;
 }
 
 //**************************************************************************************************************
-void  AsyncHTTPRequest::setTimeout(int seconds) 
+void  AsyncHTTPRequest::setTimeout(int seconds)
 {
   AHTTP_LOGDEBUG1("setTimeout = ", seconds);
 
@@ -584,9 +583,8 @@ void  AsyncHTTPRequest::setTimeout(int seconds)
 }
 
 //**************************************************************************************************************
-bool  AsyncHTTPRequest::send() 
-{ 
-  // New in v1.1.1
+bool  AsyncHTTPRequest::send()
+{
   if (_requestReadyToSend)
   {
     AHTTP_LOGDEBUG("send()");
@@ -596,24 +594,22 @@ bool  AsyncHTTPRequest::send()
     AHTTP_LOGDEBUG(CANT_SEND_BAD_REQUEST);
     return false;
   }
-  //////
 
   MUTEX_LOCK(false)
-  
-  if ( ! _buildRequest()) 
+
+  if ( ! _buildRequest())
     return false;
-    
+
   _send();
-  
+
   _AHTTP_unlock;
-  
+
   return true;
 }
 
 //**************************************************************************************************************
 bool AsyncHTTPRequest::send(const String& body)
 {
-  // New in v1.1.1
   if (_requestReadyToSend)
   {
     AHTTP_LOGDEBUG3("send(String)", body.substring(0, 16).c_str(), ", length =", body.length());
@@ -623,31 +619,29 @@ bool AsyncHTTPRequest::send(const String& body)
     AHTTP_LOGDEBUG(CANT_SEND_BAD_REQUEST);
     return false;
   }
-  //////
 
   MUTEX_LOCK(false)
-  
+
   _addHeader("Content-Length", String(body.length()).c_str());
-  
-  if ( ! _buildRequest()) 
+
+  if ( ! _buildRequest())
   {
     _AHTTP_unlock;
-    
+
     return false;
   }
-  
+
   _request->write(body);
   _send();
-  
+
   _AHTTP_unlock;
-  
+
   return true;
 }
 
 //**************************************************************************************************************
-bool  AsyncHTTPRequest::send(const char* body) 
+bool  AsyncHTTPRequest::send(const char* body)
 {
-  // New in v1.1.1
   if (_requestReadyToSend)
   {
     AHTTP_LOGDEBUG3("send(char)", body, ", length =", strlen(body));
@@ -655,33 +649,32 @@ bool  AsyncHTTPRequest::send(const char* body)
   else
   {
     AHTTP_LOGDEBUG(CANT_SEND_BAD_REQUEST);
-    return false;
-  }
-  //////
-
-  MUTEX_LOCK(false)
-  
-  _addHeader("Content-Length", String(strlen(body)).c_str());
-  
-  if ( ! _buildRequest()) 
-  {
-    _AHTTP_unlock;
     
     return false;
   }
-  
+
+  MUTEX_LOCK(false)
+
+  _addHeader("Content-Length", String(strlen(body)).c_str());
+
+  if ( ! _buildRequest())
+  {
+    _AHTTP_unlock;
+
+    return false;
+  }
+
   _request->write(body);
   _send();
-  
+
   _AHTTP_unlock;
-  
+
   return true;
 }
 
 //**************************************************************************************************************
 bool  AsyncHTTPRequest::send(const uint8_t* body, size_t len)
 {
-  // New in v1.1.1
   if (_requestReadyToSend)
   {
     AHTTP_LOGDEBUG3("send(char)", (char*) body, ", length =", len);
@@ -689,33 +682,32 @@ bool  AsyncHTTPRequest::send(const uint8_t* body, size_t len)
   else
   {
     AHTTP_LOGDEBUG(CANT_SEND_BAD_REQUEST);
-    return false;
-  }
-  //////
-
-  MUTEX_LOCK(false)
-  
-  _addHeader("Content-Length", String(len).c_str());
-  
-  if ( ! _buildRequest()) 
-  {
-    _AHTTP_unlock;
     
     return false;
   }
-  
+
+  MUTEX_LOCK(false)
+
+  _addHeader("Content-Length", String(len).c_str());
+
+  if ( ! _buildRequest())
+  {
+    _AHTTP_unlock;
+
+    return false;
+  }
+
   _request->write(body, len);
   _send();
-  
+
   _AHTTP_unlock;
-  
+
   return true;
 }
 
 //**************************************************************************************************************
 bool AsyncHTTPRequest::send(xbuf* body, size_t len)
 {
-  // New in v1.1.1
   if (_requestReadyToSend)
   {
     AHTTP_LOGDEBUG3("send(char)", body->peekString(16).c_str(), ", length =", len);
@@ -723,26 +715,26 @@ bool AsyncHTTPRequest::send(xbuf* body, size_t len)
   else
   {
     AHTTP_LOGDEBUG(CANT_SEND_BAD_REQUEST);
-    return false;
-  }
-  //////
-
-  MUTEX_LOCK(false)
-  
-  _addHeader("Content-Length", String(len).c_str());
-  
-  if ( ! _buildRequest()) 
-  {
-    _AHTTP_unlock;
     
     return false;
   }
-  
+
+  MUTEX_LOCK(false)
+
+  _addHeader("Content-Length", String(len).c_str());
+
+  if ( ! _buildRequest())
+  {
+    _AHTTP_unlock;
+
+    return false;
+  }
+
   _request->write(body, len);
   _send();
-  
+
   _AHTTP_unlock;
-  
+
   return true;
 }
 
@@ -755,11 +747,11 @@ void AsyncHTTPRequest::abort()
   {
     return;
   }
-  
+
   MUTEX_LOCK_NR
-    
+
   _client->abort();
-  
+
   _AHTTP_unlock;
 }
 //**************************************************************************************************************
@@ -775,43 +767,116 @@ int AsyncHTTPRequest::responseHTTPcode()
 }
 
 //**************************************************************************************************************
+String AsyncHTTPRequest::responseHTTPString()
+{
+  switch (_HTTPcode)
+  {
+    case 0:
+      return ("OK");
+    case HTTPCODE_CONNECTION_REFUSED:
+      return ("CONNECTION_REFUSED");
+    case HTTPCODE_SEND_HEADER_FAILED:
+      return ("SEND_HEADER_FAILED");
+    case HTTPCODE_SEND_PAYLOAD_FAILED:
+      return ("SEND_PAYLOAD_FAILED");
+    case HTTPCODE_NOT_CONNECTED:
+      return ("NOT_CONNECTED");
+    case HTTPCODE_CONNECTION_LOST:
+      return ("CONNECTION_LOST");
+    case HTTPCODE_NO_STREAM:
+      return ("NO_STREAM");
+    case HTTPCODE_NO_HTTP_SERVER:
+      return ("NO_HTTP_SERVER");
+    case HTTPCODE_TOO_LESS_RAM:
+      return ("TOO_LESS_RAM");
+    case HTTPCODE_ENCODING:
+      return ("ENCODING");
+    case HTTPCODE_STREAM_WRITE:
+      return ("STREAM_WRITE");
+    case HTTPCODE_TIMEOUT:
+      return ("TIMEOUT");
+
+    // HTTP positive code
+    case 100: return ("Continue");
+    case 101: return ("Switching Protocols");
+    case 200: return ("HTTP OK");
+    case 201: return ("Created");
+    case 202: return ("Accepted");
+    case 203: return ("Non-Authoritative Information");
+    case 204: return ("No Content");
+    case 205: return ("Reset Content");
+    case 206: return ("Partial Content");
+    case 300: return ("Multiple Choices");
+    case 301: return ("Moved Permanently");
+    case 302: return ("Found");
+    case 303: return ("See Other");
+    case 304: return ("Not Modified");
+    case 305: return ("Use Proxy");
+    case 307: return ("Temporary Redirect");
+    case 400: return ("Bad Request");
+    case 401: return ("Unauthorized");
+    case 402: return ("Payment Required");
+    case 403: return ("Forbidden");
+    case 404: return ("Not Found");
+    case 405: return ("Method Not Allowed");
+    case 406: return ("Not Acceptable");
+    case 407: return ("Proxy Authentication Required");
+    case 408: return ("Request Time-out");
+    case 409: return ("Conflict");
+    case 410: return ("Gone");
+    case 411: return ("Length Required");
+    case 412: return ("Precondition Failed");
+    case 413: return ("Request Entity Too Large");
+    case 414: return ("Request-URI Too Large");
+    case 415: return ("Unsupported Media Type");
+    case 416: return ("Requested range not satisfiable");
+    case 417: return ("Expectation Failed");
+    case 500: return ("Internal Server Error");
+    case 501: return ("Not Implemented");
+    case 502: return ("Bad Gateway");
+    case 503: return ("Service Unavailable");
+    case 504: return ("Gateway Time-out");
+    case 505: return ("HTTP Version not supported");
+    default: return "UNKNOWN";
+  }
+}
+
+//**************************************************************************************************************
 String AsyncHTTPRequest::responseText()
 {
-  AHTTP_LOGDEBUG("responseText()");
+  AHTTP_LOGDEBUG(("responseText()"));
 
   MUTEX_LOCK(String())
-  
+
   if ( ! _response || _readyState < readyStateLoading || ! available())
   {
-    AHTTP_LOGDEBUG("responseText() no data");
+    AHTTP_LOGERROR(("responseText() no data"));
 
     _AHTTP_unlock;
-    
+
     return String();
   }
 
-  String localString;
   size_t avail = available();
 
-  if ( ! localString.reserve(avail))
-  {
-    AHTTP_LOGDEBUG("responseText() no buffer");
+  String localString = _response->readString(avail);
 
+  if (localString.length() < avail)
+  {
+    AHTTP_LOGERROR(("!responseText() no buffer"))
     _HTTPcode = HTTPCODE_TOO_LESS_RAM;
     _client->abort();
-    
     _AHTTP_unlock;
-    
+
     return String();
   }
-  
-  localString   = _response->readString(avail);
+
   _contentRead += localString.length();
 
-  AHTTP_LOGDEBUG3("responseText(char)", localString, ", avail =", avail);
+  AHTTP_LOGDEBUG3(("responseText() ="), localString.substring(0, 16), (", size ="), avail);
 
   _AHTTP_unlock;
-  
+
   return localString;
 }
 
@@ -827,14 +892,13 @@ char* AsyncHTTPRequest::responseLongText()
   AHTTP_LOGDEBUG("responseLongText()");
 
   MUTEX_LOCK(NULL)
-  
+
   if ( ! _response || _readyState < readyStateLoading || ! available())
   {
     AHTTP_LOGDEBUG("responseText() no data");
 
     _AHTTP_unlock;
-    
-    //return String();
+
     return NULL;
   }
 
@@ -844,13 +908,13 @@ char* AsyncHTTPRequest::responseLongText()
 
   strncpy(globalLongString, _response->readString(avail).c_str(), lenToCopy );
   globalLongString[ lenToCopy + 1 ] = 0;
-  
+
   _contentRead += _response->readString(avail).length();
-  
+
   AHTTP_LOGDEBUG3("responseLongText(char)", globalLongString, ", avail =", avail);
-  
+
   _AHTTP_unlock;
-  
+
   return globalLongString;
 }
 
@@ -866,14 +930,14 @@ size_t AsyncHTTPRequest::responseRead(uint8_t* buf, size_t len)
   }
 
   MUTEX_LOCK(0)
-  
+
   size_t avail = available() > len ? len : available();
   _response->read(buf, avail);
 
   AHTTP_LOGDEBUG3("responseRead(char)", (char*) buf, ", avail =", avail);
 
   _contentRead += avail;
-  
+
   _AHTTP_unlock;
 
   return avail;
@@ -950,21 +1014,21 @@ bool  AsyncHTTPRequest::_parseURL(const char* url)
 bool  AsyncHTTPRequest::_parseURL(const String& url)
 {
   SAFE_DELETE(_URL)
-  
+
   int hostBeg = 0;
-  
+
   _URL = new URL;
-  
+
   if (_URL)
   {
     _URL->scheme = new char[8];
-    
+
     if (! (_URL->scheme) )
       return false;
   }
   else
     return false;
-  
+
   strcpy(_URL->scheme, "HTTP://");
 
   if (url.substring(0, 7).equalsIgnoreCase("HTTP://"))
@@ -991,29 +1055,29 @@ bool  AsyncHTTPRequest::_parseURL(const String& url)
   }
 
   _URL->host = new char[hostEnd - hostBeg + 1];
-  
+
   if (_URL->host == nullptr)
     return false;
-  
+
   strcpy(_URL->host, url.substring(hostBeg, hostEnd).c_str());
 
   int queryBeg = url.indexOf('?');
-  
-  if (queryBeg < 0) 
+
+  if (queryBeg < 0)
     queryBeg = url.length();
-    
+
   _URL->path = new char[queryBeg - pathBeg + 1];
-  
+
   if (_URL->path == nullptr)
     return false;
-  
+
   strcpy(_URL->path, url.substring(pathBeg, queryBeg).c_str());
-  
+
   _URL->query = new char[url.length() - queryBeg + 1];
-  
+
   if (_URL->query == nullptr)
     return false;
-  
+
   strcpy(_URL->query, url.substring(queryBeg).c_str());
 
   AHTTP_LOGDEBUG2("_parseURL(): scheme+host", _URL->scheme, _URL->host);
@@ -1030,11 +1094,11 @@ bool  AsyncHTTPRequest::_connect()
   if ( ! _client)
   {
     _client = new AsyncClient();
-    
+
     if (! _client)
     {
       AHTTP_LOGDEBUG("_connect: error NULL AsyncClient");
-      
+
       return false;
     }
   }
@@ -1042,35 +1106,37 @@ bool  AsyncHTTPRequest::_connect()
   SAFE_DELETE_ARRAY(_connectedHost)
 
   _connectedHost = new char[strlen(_URL->host) + 1];
-  
+
   if (_connectedHost == nullptr)
     return false;
-    
+
   strcpy(_connectedHost, _URL->host);
   _connectedPort = _URL->port;
-  
-  _client->onConnect([](void *obj, AsyncClient * client) 
+
+  _client->onConnect([](void *obj, AsyncClient * client)
   {
     ((AsyncHTTPRequest*)(obj))->_onConnect(client);
   }, this);
-  
-  _client->onDisconnect([](void *obj, AsyncClient * client) 
+
+  _client->onDisconnect([](void *obj, AsyncClient * client)
   {
     ((AsyncHTTPRequest*)(obj))->_onDisconnect(client);
   }, this);
-  
-  _client->onPoll([](void *obj, AsyncClient * client) 
+
+  _client->onPoll([](void *obj, AsyncClient * client)
   {
     ((AsyncHTTPRequest*)(obj))->_onPoll(client);
   }, this);
-  
-  _client->onError([](void *obj, AsyncClient * client, uint32_t error) 
+
+  _client->onError([](void *obj, AsyncClient * client, uint32_t error)
   {
     ((AsyncHTTPRequest*)(obj))->_onError(client, error);
   }, this);
 
   if ( ! _client->connected())
   {
+    AHTTP_LOGDEBUG3(("_client->connecting to"), _URL->host, (","), _URL->port);
+
     if ( ! _client->connect(_URL->host, _URL->port))
     {
       AHTTP_LOGDEBUG3("client.connect failed:", _URL->host, ", port =", _URL->port);
@@ -1080,6 +1146,10 @@ bool  AsyncHTTPRequest::_connect()
 
       return false;
     }
+    else
+    {
+      AHTTP_LOGDEBUG3(("client.connect OK to"), _URL->host, (","), _URL->port);
+    }
   }
   else
   {
@@ -1087,7 +1157,7 @@ bool  AsyncHTTPRequest::_connect()
   }
 
   _lastActivity = millis();
-  
+
   AHTTP_LOGDEBUG1("client.connect OK, _lastActivity (ms) =", _lastActivity);
 
   return true;
@@ -1102,24 +1172,22 @@ bool   AsyncHTTPRequest::_buildRequest()
   if ( ! _request)
   {
     _request = new xbuf;
-    
+
     if ( ! _request)
       return false;
   }
 
-  // New in v1.1.1
   AHTTP_LOGDEBUG1("_HTTPmethod =", _HTTPmethod);
   AHTTP_LOGDEBUG3(_HTTPmethodStringwithSpace[_HTTPmethod], _URL->path, _URL->query, " HTTP/1.1\r\n" );
   //////
-  
-  // New in v1.1.0
+
   _request->write(_HTTPmethodStringwithSpace[_HTTPmethod]);
   //////
-    
+
   _request->write(_URL->path);
   _request->write(_URL->query);
   _request->write(" HTTP/1.1\r\n");
-     
+
   SAFE_DELETE(_URL)
 
   _URL = nullptr;
@@ -1131,14 +1199,14 @@ bool   AsyncHTTPRequest::_buildRequest()
     _request->write(':');
     _request->write(hdr->value);
     _request->write("\r\n");
-    
+
     AHTTP_LOGDEBUG3(hdr->name, ":", hdr->value, "\r\n" );
-    
+
     hdr = hdr->next;
   }
 
   SAFE_DELETE(_headers)
-  
+
   _headers = nullptr;
   _request->write("\r\n");
 
@@ -1153,16 +1221,21 @@ size_t  AsyncHTTPRequest::_send()
 
   AHTTP_LOGDEBUG1("_send(), _request->available =", _request->available());
 
-  if ( ! _client->connected() || ! _client->canSend())
+  if ( ! _client->connected())
   {
-    if (! _client->connected())
-    {
-      AHTTP_LOGDEBUG("*can't send : !_client->connected");
-    }
-    else
-    {
-      AHTTP_LOGDEBUG("*can't send : !_client->canSend");
-    }
+    AHTTP_LOGDEBUG(F("!connected yet"));
+
+    // KH fix bug https://github.com/khoih-prog/AsyncHTTPRequest_Generic/issues/38
+    _HTTPcode = HTTPCODE_NOT_CONNECTED;
+    _setReadyState(readyStateDone);
+
+    ///////////////////////////
+
+    return 0;
+  }
+  else if ( ! _client->canSend())
+  {
+    AHTTP_LOGDEBUG(F("*can't send"));
 
     return 0;
   }
@@ -1174,15 +1247,18 @@ size_t  AsyncHTTPRequest::_send()
     supply = demand;
 
   size_t sent = 0;
-  uint8_t* temp = new uint8_t[100];
+
+  #define MAX_CHUNK_SIZE      100
   
+  uint8_t* temp = new uint8_t[MAX_CHUNK_SIZE];
+
   if (!temp)
     return 0;
 
   while (supply)
   {
-    size_t chunk = supply < 100 ? supply : 100;
-    
+    size_t chunk = supply < MAX_CHUNK_SIZE ? supply : MAX_CHUNK_SIZE;
+
     supply  -= _request->read(temp, chunk);
     sent    += _client->add((char*)temp, chunk);
   }
@@ -1194,7 +1270,7 @@ size_t  AsyncHTTPRequest::_send()
   {
     //delete _request;
     SAFE_DELETE(_request)
-    
+
     _request = nullptr;
   }
 
@@ -1208,7 +1284,7 @@ size_t  AsyncHTTPRequest::_send()
 }
 
 //**************************************************************************************************************
-void  AsyncHTTPRequest::_setReadyState(reqStates newState) 
+void  AsyncHTTPRequest::_setReadyState(reqStates newState)
 {
   if (_readyState != newState)
   {
@@ -1285,43 +1361,43 @@ void  AsyncHTTPRequest::_onConnect(AsyncClient* client)
   AHTTP_LOGDEBUG("_onConnect handler");
 
   MUTEX_LOCK_NR
-  
+
   _client = client;
   _setReadyState(readyStateOpened);
-  
+
   // KH test
   _response = new xbuf;
   //_response = new xbuf(256);
   //////
-  
+
   if (!_response)
   {
     _AHTTP_unlock;
-    
+
     // KH, to remove
     AHTTP_LOGDEBUG("_onConnect: Can't new _responser");
     ///////
-    
+
     return;
   }
-  
+
   _contentLength = 0;
   _contentRead = 0;
   _chunked = false;
-  
-  _client->onAck([](void* obj, AsyncClient * client, size_t len, uint32_t time) 
+
+  _client->onAck([](void* obj, AsyncClient * client, size_t len, uint32_t time)
   {
     (void) client;
     (void) len;
     (void) time;
-    
+
     ((AsyncHTTPRequest*)(obj))->_send();
   }, this);
-  
-  _client->onData([](void* obj, AsyncClient * client, void* data, size_t len) 
+
+  _client->onData([](void* obj, AsyncClient * client, void* data, size_t len)
   {
     (void) client;
-    
+
     ((AsyncHTTPRequest*)(obj))->_onData(data, len);
   }, this);
 
@@ -1331,7 +1407,7 @@ void  AsyncHTTPRequest::_onConnect(AsyncClient* client)
   }
 
   _lastActivity = millis();
-  
+
   _AHTTP_unlock;
 }
 
@@ -1339,7 +1415,7 @@ void  AsyncHTTPRequest::_onConnect(AsyncClient* client)
 void  AsyncHTTPRequest::_onPoll(AsyncClient* client)
 {
   (void) client;
-  
+
   MUTEX_LOCK_NR
 
   if (_timeout && (millis() - _lastActivity) > (_timeout * 1000))
@@ -1362,7 +1438,7 @@ void  AsyncHTTPRequest::_onPoll(AsyncClient* client)
 void  AsyncHTTPRequest::_onError(AsyncClient* client, int8_t error)
 {
   (void) client;
-  
+
   AHTTP_LOGDEBUG1("_onError handler error =", error);
 
   _HTTPcode = error;
@@ -1372,11 +1448,11 @@ void  AsyncHTTPRequest::_onError(AsyncClient* client, int8_t error)
 void  AsyncHTTPRequest::_onDisconnect(AsyncClient* client)
 {
   (void) client;
-  
+
   AHTTP_LOGDEBUG("\n_onDisconnect handler");
 
   MUTEX_LOCK_NR
-  
+
   if (_readyState < readyStateOpened)
   {
     _HTTPcode = HTTPCODE_NOT_CONNECTED;
@@ -1388,18 +1464,18 @@ void  AsyncHTTPRequest::_onDisconnect(AsyncClient* client)
   }
 
   SAFE_DELETE(_client)
-  
+
   _client = nullptr;
-  
+
   SAFE_DELETE_ARRAY(_connectedHost)
-  
+
   _connectedHost = nullptr;
-  
+
   _connectedPort  = -1;
   _requestEndTime = millis();
   _lastActivity   = 0;
   _setReadyState(readyStateDone);
-  
+
   _AHTTP_unlock;
 }
 
@@ -1409,18 +1485,18 @@ void  AsyncHTTPRequest::_onData(void* Vbuf, size_t len)
   AHTTP_LOGDEBUG3("_onData handler", (char*) Vbuf, ", len =", len);
 
   MUTEX_LOCK_NR
-  
+
   _lastActivity = millis();
 
   // Transfer data to xbuf
   if (_chunks)
   {
     _chunks->write((uint8_t*)Vbuf, len);
-    
+
     // KH, to remove
-    AHTTP_LOGDEBUG("_onData: _processChunks");
+    //AHTTP_LOGDEBUG("_onData: _processChunks");
     ///////
-    
+
     _processChunks();
   }
   else
@@ -1434,11 +1510,11 @@ void  AsyncHTTPRequest::_onData(void* Vbuf, size_t len)
     if ( ! _collectHeaders())
     {
       _AHTTP_unlock;
-      
+
       // KH, to remove
-      AHTTP_LOGDEBUG("_onData: headers not complete");
+      //AHTTP_LOGDEBUG("_onData: headers not complete");
       ///////
-      
+
       return;
     }
   }
@@ -1595,16 +1671,16 @@ int AsyncHTTPRequest::respHeaderCount()
 }
 
 //**************************************************************************************************************
-char* AsyncHTTPRequest::respHeaderName(int ndx) 
+char* AsyncHTTPRequest::respHeaderName(int ndx)
 {
-  if (_readyState < readyStateHdrsRecvd) 
+  if (_readyState < readyStateHdrsRecvd)
     return nullptr;
-    
+
   header* hdr = _getHeader(ndx);
-  
-  if ( ! hdr) 
+
+  if ( ! hdr)
     return nullptr;
-    
+
   return hdr->name;
 }
 
@@ -1654,7 +1730,7 @@ bool AsyncHTTPRequest::respHeaderExists(const char* name)
 String AsyncHTTPRequest::headers()
 {
   MUTEX_LOCK(String())
-  
+
   String _response = "";
   header* hdr = _headers;
 
@@ -1668,7 +1744,7 @@ String AsyncHTTPRequest::headers()
   }
 
   _response += "\r\n";
-  
+
   _AHTTP_unlock;
 
   return _response;
@@ -1678,7 +1754,7 @@ String AsyncHTTPRequest::headers()
 AsyncHTTPRequest::header*  AsyncHTTPRequest::_addHeader(const char* name, const char* value)
 {
   MUTEX_LOCK(nullptr)
-  
+
   header* hdr = (header*) &_headers;
 
   while (hdr->next)
@@ -1688,7 +1764,7 @@ AsyncHTTPRequest::header*  AsyncHTTPRequest::_addHeader(const char* name, const 
       header* oldHdr  = hdr->next;
       hdr->next       = hdr->next->next;
       oldHdr->next    = nullptr;
-      
+
       SAFE_DELETE(oldHdr)
     }
     else
@@ -1698,29 +1774,29 @@ AsyncHTTPRequest::header*  AsyncHTTPRequest::_addHeader(const char* name, const 
   }
 
   hdr->next = new header;
-  
+
   if (hdr->next)
   {
     hdr->next->name = new char[strlen(name) + 1];
-    
+
     if (hdr->next->name)
       strcpy(hdr->next->name, name);
     else
     {
       SAFE_DELETE(hdr->next)
-      
+
       return nullptr;
     }
-    
+
     hdr->next->value = new char[strlen(value) + 1];
-    
+
     if (hdr->next->value)
-      strcpy(hdr->next->value, value); 
+      strcpy(hdr->next->value, value);
     else
     {
       SAFE_DELETE_ARRAY(hdr->next->name)
       SAFE_DELETE(hdr->next)
-      
+
       return nullptr;
     }
   }
@@ -1728,7 +1804,7 @@ AsyncHTTPRequest::header*  AsyncHTTPRequest::_addHeader(const char* name, const 
   {
     return nullptr;
   }
-  
+
   _AHTTP_unlock;
 
   return hdr->next;
@@ -1738,7 +1814,7 @@ AsyncHTTPRequest::header*  AsyncHTTPRequest::_addHeader(const char* name, const 
 AsyncHTTPRequest::header* AsyncHTTPRequest::_getHeader(const char* name)
 {
   MUTEX_LOCK(nullptr)
-  
+
   header* hdr = _headers;
 
   while (hdr)
@@ -1758,7 +1834,7 @@ AsyncHTTPRequest::header* AsyncHTTPRequest::_getHeader(const char* name)
 AsyncHTTPRequest::header* AsyncHTTPRequest::_getHeader(int ndx)
 {
   MUTEX_LOCK(nullptr)
-  
+
   header* hdr = _headers;
 
   while (hdr)

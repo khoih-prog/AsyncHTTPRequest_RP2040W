@@ -1,6 +1,6 @@
 {
   "name": "AsyncHTTPRequest_RP2040W",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "keywords": "communication, http, async, websocket, webserver, async-webserver, async-tcp, async-udp, async-websocket, async-http, ssl, tls, mbed, mbed-portenta, portenta-h7, portentah7, portenta-h7-m7, portenta-h7-m4, portentah7-m7, portentah7-m4, stm32h7",
   "description": "Simple Async HTTP Request library, supporting GET, POST, PUT, PATCH, DELETE and HEAD, on top of AsyncTCP_RP2040W library for RASPBERRY_PI_PICO_W with CYW43439 WiFi. This library, which relies on AsyncTCP_RP2040W, is part of a series of advanced Async libraries, such as AsyncTCP_RP2040W, AsyncUDP_RP2040W, AsyncWebSockets_RP2040W, AsyncWebServer_RP2040W, AsyncHTTPRequest_RP2040W, AsyncHTTPSRequest_RP2040W, etc.",
   "authors": 

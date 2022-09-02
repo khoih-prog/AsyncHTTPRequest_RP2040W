@@ -18,8 +18,12 @@
  
 #include "defines.h"
 
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN_TARGET      "AsyncHTTPRequest_RP2040W v1.0.0"
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN             1000000
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN_TARGET      "AsyncHTTPRequest_RP2040W v1.1.0"
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN             1001000
+
+// Level from 0-4
+#define ASYNC_HTTP_DEBUG_PORT     Serial
+#define _ASYNC_HTTP_LOGLEVEL_     2
 
 // Select a test server address           
 //char GET_ServerAddress[]    = "ipv4bot.whatismyipaddress.com/";
@@ -56,17 +60,21 @@ void sendRequest()
   }
 }
 
-void requestCB(void* optParm, AsyncHTTPRequest* request, int readyState)
+void requestCB(void *optParm, AsyncHTTPRequest *request, int readyState)
 {
   (void) optParm;
-  
+
   if (readyState == readyStateDone)
   {
-    Serial.println("\n**************************************");
-    Serial.println(request->responseText());
-    Serial.println("**************************************");
+    AHTTP_LOGWARN(F("\n**************************************"));
+    AHTTP_LOGWARN1(F("Response Code = "), request->responseHTTPString());
 
-    request->setDebug(false);
+    if (request->responseHTTPcode() == 200)
+    {
+      Serial.println(F("\n**************************************"));
+      Serial.println(request->responseText());
+      Serial.println(F("**************************************"));
+    }
   }
 }
 
@@ -85,7 +93,7 @@ void printWifiStatus()
 void setup() 
 {
   Serial.begin(115200);
-  while (!Serial);
+  while (!Serial && millis() < 5000);
 
   Serial.print("\nStart AsyncSimpleGET on "); Serial.println(BOARD_NAME);
   Serial.println(ASYNCTCP_RP2040W_VERSION);

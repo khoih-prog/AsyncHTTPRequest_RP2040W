@@ -27,8 +27,12 @@
 
 #include "defines.h"
 
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN_TARGET      "AsyncHTTPRequest_RP2040W v1.0.0"
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN             1000000
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN_TARGET      "AsyncHTTPRequest_RP2040W v1.1.0"
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN             1001000
+
+// Level from 0-4
+#define ASYNC_HTTP_DEBUG_PORT     Serial
+#define _ASYNC_HTTP_LOGLEVEL_     2
 
 // Select a test server address           
 const char GET_ServerAddress[] = "dweet.io";
@@ -107,14 +111,19 @@ void requestCB(void* optParm, AsyncHTTPRequest* request, int readyState)
   
   if (readyState == readyStateDone)
   {
-    String responseText = request->responseText();
-    
-    Serial.println("\n**************************************");
-    //Serial.println(request->responseText());
-    Serial.println(responseText);
-    Serial.println("**************************************");
+    AHTTP_LOGWARN(F("\n**************************************"));
+    AHTTP_LOGWARN1(F("Response Code = "), request->responseHTTPString());
 
-    parseResponse(responseText);
+    if (request->responseHTTPcode() == 200)
+    {
+      String responseText = request->responseText();
+    
+      Serial.println("\n**************************************");
+      Serial.println(responseText);
+      Serial.println("**************************************");
+  
+      parseResponse(responseText);
+    }
       
     request->setDebug(false);
   }
@@ -135,7 +144,7 @@ void printWifiStatus()
 void setup() 
 {
   Serial.begin(115200);
-  while (!Serial);
+ while (!Serial && millis() < 5000);
 
   Serial.print("\nStart AsyncDweetGET on "); Serial.println(BOARD_NAME);
   Serial.println(ASYNCTCP_RP2040W_VERSION);

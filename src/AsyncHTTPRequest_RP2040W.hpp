@@ -13,14 +13,16 @@
   as published bythe Free Software Foundation, either version 3 of the License, or (at your option) any later version.
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.  
+  You should have received a copy of the GNU General Public License along with this program.  
+  If not, see <https://www.gnu.org/licenses/> 
  
-  Version: 1.0.1
+  Version: 1.1.0
   
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      14/08/2022 Initial coding for RP2040W with CYW43439 WiFi
   1.0.1   K Hoang      15/08/2022 Fix bug in examples
+  1.1.0    K Hoang     01/09/2022 Fix bug. Improve debug messages. Optimize code.
  *****************************************************************************************************************************/
 
 #pragma once
@@ -60,13 +62,13 @@
   #define SHIELD_TYPE           "RP2040W CYW43439 WiFi"
 #endif
 
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION            "AsyncHTTPRequest_RP2040W v1.0.1"
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION            "AsyncHTTPRequest_RP2040W v1.1.0"
 
 #define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MAJOR      1
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MINOR      0
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_PATCH      1
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MINOR      1
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_PATCH      0
 
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_INT        1000001
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_INT        1001000
 
 #include "AsyncTCP_RP2040W.h"
 
@@ -245,31 +247,27 @@ class AsyncHTTPRequest
         //delete next;
       }
     };
-
+ 
     struct  URL 
     {
-      char*   scheme;
-      char*   user;
-      char*   pwd;
-      char*   host;
+      char     *buffer;
+      char    *scheme;
+      char    *host;
       int     port;
-      char*   path;
-      char*   query;
-      char*   fragment;
+      char    *path;
+      char    *query;
       
-      URL():  scheme(nullptr), user(nullptr), pwd(nullptr), host(nullptr),
-              port(80), path(nullptr), query(nullptr), fragment(nullptr)
+      URL():  buffer(nullptr), scheme(nullptr), host(nullptr),
+              port(80), path(nullptr), query(nullptr)
       {};
-      
-      ~URL() 
+        
+      ~URL()
       {
+        SAFE_DELETE_ARRAY(buffer)
         SAFE_DELETE_ARRAY(scheme)
-        SAFE_DELETE_ARRAY(user)
-        SAFE_DELETE_ARRAY(pwd)
         SAFE_DELETE_ARRAY(host)
         SAFE_DELETE_ARRAY(path)
         SAFE_DELETE_ARRAY(query)
-        SAFE_DELETE_ARRAY(fragment)
       }
     };
 
@@ -316,6 +314,7 @@ class AsyncHTTPRequest
     size_t      available();                                            // response available
     size_t      responseLength();                                       // indicated response length or sum of chunks to date
     int         responseHTTPcode();                                     // HTTP response code or (negative) error code
+    String      responseHTTPString();
     String      responseText();                                         // response (whole* or partial* as string)
     
     char*       responseLongText();                                     // response long (whole* or partial* as string)
