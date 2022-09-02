@@ -104,7 +104,7 @@ This library is based on, modified from:
 ## Prerequisites
 
  1. [`Arduino IDE 1.8.19+` for Arduino](https://github.com/arduino/Arduino). [![GitHub release](https://img.shields.io/github/release/arduino/Arduino.svg)](https://github.com/arduino/Arduino/releases/latest)
- 2. [`Earle Philhower's arduino-pico core v2.4.0+`](https://github.com/earlephilhower/arduino-pico) for **RASPBERRY_PI_PICO_W with CYW43439 WiFi**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
+ 2. [`Earle Philhower's arduino-pico core v2.5.0+`](https://github.com/earlephilhower/arduino-pico) for **RASPBERRY_PI_PICO_W with CYW43439 WiFi**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
  3. [`AsyncTCP_RP2040W library v1.0.0+`](https://github.com/khoih-prog/AsyncTCP_RP2040W) for RASPBERRY_PI_PICO_W with CYW43439 WiFi. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/AsyncTCP_RP2040W.svg?)](https://www.ardu-badge.com/AsyncTCP_RP2040W)
 
 ---
@@ -178,13 +178,13 @@ Please take a look at other examples, as well.
 
 #### 1. File [AsyncHTTPRequest.ino](examples/AsyncHTTPRequest/AsyncHTTPRequest.ino)
 
-https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/39eb61479ae868729b43ebb2c86bc11437fce2f8/examples/AsyncHTTPRequest/AsyncHTTPRequest.ino#L41-L177
+https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/f3d2a0a86717a1af77707a112ba1936027dfbca6/examples/AsyncHTTPRequest/AsyncHTTPRequest.ino#L41-L185
 
 ---
 
 #### 2. File [defines.h](examples/AsyncHTTPRequest/defines.h)
 
-https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/39eb61479ae868729b43ebb2c86bc11437fce2f8/examples/AsyncHTTPRequest/defines.h#L1-L30
+https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/f3d2a0a86717a1af77707a112ba1936027dfbca6/examples/AsyncHTTPRequest/defines.h#L20-L30
 
 ---
 ---
@@ -194,51 +194,59 @@ https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/39eb61479ae868729b43
 #### 1. [AsyncHTTPRequest](examples/AsyncHTTPRequest) running on RASPBERRY_PI_PICO_W using CYW43439 WiFi
 
 ```
+22:21:21.419 -> Start AsyncHTTPRequest on RASPBERRY_PI_PICO_W
+22:21:21.419 -> AsyncTCP_RP2040W v1.0.0
+22:21:21.419 -> AsyncHTTPRequest_RP2040W v1.1.0
+22:21:21.419 -> Connecting to SSID: HueNet1
+22:21:28.786 -> SSID: HueNet1
+22:21:28.786 -> Local IP Address: 192.168.2.180
+22:21:28.786 -> Request sent
+22:21:28.786 -> [AHTTP] 
+22:21:28.786 -> **************************************
+22:21:28.786 -> [AHTTP] Response Code =  NOT_CONNECTED
+22:21:28.885 -> [AHTTP] 
+22:21:28.885 -> **************************************
+22:21:28.885 -> [AHTTP] Response Code =  HTTP OK
+22:21:28.885 -> 
+22:21:28.885 -> **************************************
+22:21:28.885 -> abbreviation: EDT
+22:21:28.885 -> client_ip: 45.72.143.183
+22:21:28.885 -> datetime: 2022-09-01T22:21:28.831047-04:00
+22:21:28.885 -> day_of_week: 4
+22:21:28.885 -> day_of_year: 244
+22:21:28.885 -> dst: true
+22:21:28.885 -> dst_from: 2022-03-13T07:00:00+00:00
+22:21:28.885 -> dst_offset: 3600
+22:21:28.885 -> dst_until: 2022-11-06T06:00:00+00:00
+22:21:28.885 -> raw_offset: -18000
+22:21:28.885 -> timezone: America/Toronto
+22:21:28.885 -> unixtime: 1662085288
+22:21:28.885 -> utc_datetime: 2022-09-02T02:21:28.831047+00:00
+22:21:28.885 -> utc_offset: -04:00
+22:21:28.885 -> week_number: 35
+22:21:28.885 -> **************************************
+22:22:28.801 -> Request sent
+22:22:28.834 -> [AHTTP] 
+22:22:28.834 -> **************************************
+22:22:28.834 -> [AHTTP] Response Code =  HTTP OK
+22:22:28.834 -> 
+22:22:28.834 -> **************************************
+22:22:28.834 -> abbreviation: EDT
+22:22:28.834 -> client_ip: 45.72.143.183
+22:22:28.834 -> datetime: 2022-09-01T22:22:28.779577-04:00
+22:22:28.834 -> day_of_week: 4
+22:22:28.834 -> day_of_year: 244
+22:22:28.834 -> dst: true
+22:22:28.834 -> dst_from: 2022-03-13T07:00:00+00:00
+22:22:28.834 -> dst_offset: 3600
+22:22:28.834 -> dst_until: 2022-11-06T06:00:00+00:00
+22:22:28.834 -> raw_offset: -18000
+22:22:28.834 -> timezone: America/Toronto
+22:22:28.834 -> unixtime: 1662085348
+22:22:28.834 -> utc_datetime: 2022-09-02T02:22:28.779577+00:00
+22:22:28.834 -> utc_offset: -04:00
+22:22:28.834 -> week_number: 35
 
-Start AsyncHTTPRequest on RASPBERRY_PI_PICO_W
-AsyncTCP_RP2040W v1.0.0
-AsyncHTTPRequest_RP2040W v1.0.1
-Connecting to SSID: HueNet1
-SSID: HueNet1
-Local IP Address: 192.168.2.180
-Request sent
-
-**************************************
-abbreviation: EDT
-client_ip: 69.165.159.183
-datetime: 2022-08-15T21:53:32.353173-04:00
-day_of_week: 1
-day_of_year: 227
-dst: true
-dst_from: 2022-03-13T07:00:00+00:00
-dst_offset: 3600
-dst_until: 2022-11-06T06:00:00+00:00
-raw_offset: -18000
-timezone: America/Toronto
-unixtime: 1660614812
-utc_datetime: 2022-08-16T01:53:32.353173+00:00
-utc_offset: -04:00
-week_number: 33
-**************************************
-Request sent
-
-**************************************
-abbreviation: EDT
-client_ip: 69.165.159.183
-datetime: 2022-08-15T21:54:32.316488-04:00
-day_of_week: 1
-day_of_year: 227
-dst: true
-dst_from: 2022-03-13T07:00:00+00:00
-dst_offset: 3600
-dst_until: 2022-11-06T06:00:00+00:00
-raw_offset: -18000
-timezone: America/Toronto
-unixtime: 1660614872
-utc_datetime: 2022-08-16T01:54:32.316488+00:00
-utc_offset: -04:00
-week_number: 33
-**************************************
 ```
 
 ---
@@ -248,7 +256,7 @@ week_number: 33
 ```
 Start AsyncDweetPOST on RASPBERRY_PI_PICO_W with RP2040W CYW43439 WiFi
 AsyncTCP_RP2040W v1.0.0
-AsyncHTTPRequest_RP2040W v1.0.1
+AsyncHTTPRequest_RP2040W v1.1.0
 Connecting to SSID: HueNet1
 SSID: HueNet1
 Local IP Address: 192.168.2.180
@@ -270,7 +278,7 @@ Actual value: 88
 ```
 Start AsyncWebClientRepeating on RASPBERRY_PI_PICO_W
 AsyncTCP_RP2040W v1.0.0
-AsyncHTTPRequest_RP2040W v1.0.1
+AsyncHTTPRequest_RP2040W v1.1.0
 Connecting to SSID: HueNet1
 SSID: HueNet1
 Local IP Address: 192.168.2.180
@@ -334,8 +342,8 @@ You can also change the debugging level from 0 to 4
 #define ASYNC_HTTP_RP2040W_DEBUG_PORT           Serial
 
 // Use from 0 to 4. Higher number, more debugging messages and memory usage.
-#define _ASYNCTCP_RP2040W_LOGLEVEL_             1
-#define _ASYNC_HTTP_LOGLEVEL_                   1
+#define _ASYNCTCP_RP2040W_LOGLEVEL_             2
+#define _ASYNC_HTTP_LOGLEVEL_                   2
 ```
 
 ---
@@ -368,7 +376,9 @@ Submit issues to: [AsyncHTTPRequest_RP2040W issues](https://github.com/khoih-pro
  3. Add PUT, PATCH, DELETE and HEAD besides GET and POST.
  4. Fix `multiple-definitions` linker error and weird bug related to `src_cpp`.
  5. Optimize library code by using `reference-passing` instead of `value-passing`
-
+ 6. Fix long timeout if using `IPAddress`
+ 
+ 
 ---
 ---
 
