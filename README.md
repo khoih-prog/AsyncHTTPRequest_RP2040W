@@ -104,8 +104,8 @@ This library is based on, modified from:
 ## Prerequisites
 
  1. [`Arduino IDE 1.8.19+` for Arduino](https://github.com/arduino/Arduino). [![GitHub release](https://img.shields.io/github/release/arduino/Arduino.svg)](https://github.com/arduino/Arduino/releases/latest)
- 2. [`Earle Philhower's arduino-pico core v2.5.0+`](https://github.com/earlephilhower/arduino-pico) for **RASPBERRY_PI_PICO_W with CYW43439 WiFi**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
- 3. [`AsyncTCP_RP2040W library v1.0.0+`](https://github.com/khoih-prog/AsyncTCP_RP2040W) for RASPBERRY_PI_PICO_W with CYW43439 WiFi. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/AsyncTCP_RP2040W.svg?)](https://www.ardu-badge.com/AsyncTCP_RP2040W)
+ 2. [`Earle Philhower's arduino-pico core v2.6.1+`](https://github.com/earlephilhower/arduino-pico) for **RASPBERRY_PI_PICO_W with CYW43439 WiFi**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
+ 3. [`AsyncTCP_RP2040W library v1.1.0+`](https://github.com/khoih-prog/AsyncTCP_RP2040W) for RASPBERRY_PI_PICO_W with CYW43439 WiFi. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/AsyncTCP_RP2040W.svg?)](https://www.ardu-badge.com/AsyncTCP_RP2040W)
 
 ---
 ---
@@ -139,14 +139,14 @@ The current library implementation, using `xyz-Impl.h` instead of standard `xyz.
 
 You can include this `.hpp` file
 
-```
+```cpp
 // Can be included as many times as necessary, without `Multiple Definitions` Linker Error
 #include "AsyncHTTPRequest_RP2040W.hpp"     //https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W
 ```
 
 in many files. But be sure to use the following `.h` file **in just 1 `.h`, `.cpp` or `.ino` file**, which must **not be included in any other file**, to avoid `Multiple Definitions` Linker Error
 
-```
+```cpp
 // To be included only in main(), .ino with setup() to avoid `Multiple Definitions` Linker Error
 #include "AsyncHTTPRequest_RP2040W.h"           //https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W
 ```
@@ -178,13 +178,13 @@ Please take a look at other examples, as well.
 
 #### 1. File [AsyncHTTPRequest.ino](examples/AsyncHTTPRequest/AsyncHTTPRequest.ino)
 
-https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/f3d2a0a86717a1af77707a112ba1936027dfbca6/examples/AsyncHTTPRequest/AsyncHTTPRequest.ino#L41-L185
+https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/19ea1ad318800e695da4ed3c1ef91e9bcd9a7b29/examples/AsyncHTTPRequest/AsyncHTTPRequest.ino#L41-L185
 
 ---
 
 #### 2. File [defines.h](examples/AsyncHTTPRequest/defines.h)
 
-https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/f3d2a0a86717a1af77707a112ba1936027dfbca6/examples/AsyncHTTPRequest/defines.h#L20-L30
+https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/19ea1ad318800e695da4ed3c1ef91e9bcd9a7b29/examples/AsyncHTTPRequest/defines.h#L20-L30
 
 ---
 ---
@@ -194,59 +194,31 @@ https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/f3d2a0a86717a1af7770
 #### 1. [AsyncHTTPRequest](examples/AsyncHTTPRequest) running on RASPBERRY_PI_PICO_W using CYW43439 WiFi
 
 ```
-22:21:21.419 -> Start AsyncHTTPRequest on RASPBERRY_PI_PICO_W
-22:21:21.419 -> AsyncTCP_RP2040W v1.0.0
-22:21:21.419 -> AsyncHTTPRequest_RP2040W v1.1.0
-22:21:21.419 -> Connecting to SSID: HueNet1
-22:21:28.786 -> SSID: HueNet1
-22:21:28.786 -> Local IP Address: 192.168.2.180
-22:21:28.786 -> Request sent
-22:21:28.786 -> [AHTTP] 
-22:21:28.786 -> **************************************
-22:21:28.786 -> [AHTTP] Response Code =  NOT_CONNECTED
-22:21:28.885 -> [AHTTP] 
-22:21:28.885 -> **************************************
-22:21:28.885 -> [AHTTP] Response Code =  HTTP OK
-22:21:28.885 -> 
-22:21:28.885 -> **************************************
-22:21:28.885 -> abbreviation: EDT
-22:21:28.885 -> client_ip: 45.72.143.183
-22:21:28.885 -> datetime: 2022-09-01T22:21:28.831047-04:00
-22:21:28.885 -> day_of_week: 4
-22:21:28.885 -> day_of_year: 244
-22:21:28.885 -> dst: true
-22:21:28.885 -> dst_from: 2022-03-13T07:00:00+00:00
-22:21:28.885 -> dst_offset: 3600
-22:21:28.885 -> dst_until: 2022-11-06T06:00:00+00:00
-22:21:28.885 -> raw_offset: -18000
-22:21:28.885 -> timezone: America/Toronto
-22:21:28.885 -> unixtime: 1662085288
-22:21:28.885 -> utc_datetime: 2022-09-02T02:21:28.831047+00:00
-22:21:28.885 -> utc_offset: -04:00
-22:21:28.885 -> week_number: 35
-22:21:28.885 -> **************************************
-22:22:28.801 -> Request sent
-22:22:28.834 -> [AHTTP] 
-22:22:28.834 -> **************************************
-22:22:28.834 -> [AHTTP] Response Code =  HTTP OK
-22:22:28.834 -> 
-22:22:28.834 -> **************************************
-22:22:28.834 -> abbreviation: EDT
-22:22:28.834 -> client_ip: 45.72.143.183
-22:22:28.834 -> datetime: 2022-09-01T22:22:28.779577-04:00
-22:22:28.834 -> day_of_week: 4
-22:22:28.834 -> day_of_year: 244
-22:22:28.834 -> dst: true
-22:22:28.834 -> dst_from: 2022-03-13T07:00:00+00:00
-22:22:28.834 -> dst_offset: 3600
-22:22:28.834 -> dst_until: 2022-11-06T06:00:00+00:00
-22:22:28.834 -> raw_offset: -18000
-22:22:28.834 -> timezone: America/Toronto
-22:22:28.834 -> unixtime: 1662085348
-22:22:28.834 -> utc_datetime: 2022-09-02T02:22:28.779577+00:00
-22:22:28.834 -> utc_offset: -04:00
-22:22:28.834 -> week_number: 35
+Start AsyncHTTPRequest on RASPBERRY_PI_PICO_W
+AsyncTCP_RP2040W v1.1.0
+AsyncHTTPRequest_RP2040W v1.1.1
+Connecting to SSID: HueNet1
+SSID: HueNet1
+Local IP Address: 192.168.2.77
+Request sent
 
+**************************************
+abbreviation: EDT
+client_ip: aaa.bbb.ccc.ddd
+datetime: 2022-10-19T00:56:39.919053-04:00
+day_of_week: 3
+day_of_year: 292
+dst: true
+dst_from: 2022-03-13T07:00:00+00:00
+dst_offset: 3600
+dst_until: 2022-11-06T06:00:00+00:00
+raw_offset: -18000
+timezone: America/Toronto
+unixtime: 1666155399
+utc_datetime: 2022-10-19T04:56:39.919053+00:00
+utc_offset: -04:00
+week_number: 42
+**************************************
 ```
 
 ---
@@ -377,7 +349,7 @@ Submit issues to: [AsyncHTTPRequest_RP2040W issues](https://github.com/khoih-pro
  4. Fix `multiple-definitions` linker error and weird bug related to `src_cpp`.
  5. Optimize library code by using `reference-passing` instead of `value-passing`
  6. Fix long timeout if using `IPAddress`
- 
+ 7. Not try to reconnect to the same `host:port` after connected
  
 ---
 ---
@@ -405,6 +377,7 @@ If you want to contribute to this project:
 - Create issues and pull requests
 - Tell other people about this library
 
+---
 ---
 
 ### License and credits ###
