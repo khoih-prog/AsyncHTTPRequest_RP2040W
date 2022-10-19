@@ -227,7 +227,7 @@ week_number: 42
 
 ```
 Start AsyncDweetPOST on RASPBERRY_PI_PICO_W with RP2040W CYW43439 WiFi
-AsyncTCP_RP2040W v1.0.0
+AsyncTCP_RP2040W v1.1.0
 AsyncHTTPRequest_RP2040W v1.1.0
 Connecting to SSID: HueNet1
 SSID: HueNet1
@@ -249,7 +249,7 @@ Actual value: 88
 
 ```
 Start AsyncWebClientRepeating on RASPBERRY_PI_PICO_W
-AsyncTCP_RP2040W v1.0.0
+AsyncTCP_RP2040W v1.1.0
 AsyncHTTPRequest_RP2040W v1.1.0
 Connecting to SSID: HueNet1
 SSID: HueNet1
