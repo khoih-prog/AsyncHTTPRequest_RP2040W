@@ -40,12 +40,12 @@
 
 #include "defines.h"
 
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN_TARGET      "AsyncHTTPRequest_RP2040W v1.1.0"
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN             1001000
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN_TARGET      "AsyncHTTPRequest_RP2040W v1.1.1"
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN             1001001
 
 // Level from 0-4
 #define ASYNC_HTTP_DEBUG_PORT     Serial
-#define _ASYNC_HTTP_LOGLEVEL_     2
+#define _ASYNC_HTTP_LOGLEVEL_     1
 
 // To be included only in main(), .ino with setup() to avoid `Multiple Definitions` Linker Error
 #include <AsyncHTTPRequest_RP2040W.h>         // https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W
