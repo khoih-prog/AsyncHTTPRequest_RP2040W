@@ -5,6 +5,9 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](#Contributing)
 [![GitHub issues](https://img.shields.io/github/issues/khoih-prog/AsyncHTTPRequest_RP2040W.svg)](http://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/issues)
 
+<a href="https://www.buymeacoffee.com/khoihprog6" title="Donate to my libraries using BuyMeACoffee"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Donate to my libraries using BuyMeACoffee" style="height: 50px !important;width: 181px !important;" ></a>
+<a href="https://www.buymeacoffee.com/khoihprog6" title="Donate to my libraries using BuyMeACoffee"><img src="https://img.shields.io/badge/buy%20me%20a%20coffee-donate-orange.svg?logo=buy-me-a-coffee&logoColor=FFDD00" style="height: 20px !important;width: 200px !important;" ></a>
+
 ---
 ---
 
@@ -178,13 +181,13 @@ Please take a look at other examples, as well.
 
 #### 1. File [AsyncHTTPRequest.ino](examples/AsyncHTTPRequest/AsyncHTTPRequest.ino)
 
-https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/19ea1ad318800e695da4ed3c1ef91e9bcd9a7b29/examples/AsyncHTTPRequest/AsyncHTTPRequest.ino#L41-L185
+https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/baaf7b022bd3c1372c1d5bd6ba81b4ccc9099b41/examples/AsyncHTTPRequest/AsyncHTTPRequest.ino#L41-L185
 
 ---
 
 #### 2. File [defines.h](examples/AsyncHTTPRequest/defines.h)
 
-https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/19ea1ad318800e695da4ed3c1ef91e9bcd9a7b29/examples/AsyncHTTPRequest/defines.h#L20-L30
+https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/baaf7b022bd3c1372c1d5bd6ba81b4ccc9099b41/examples/AsyncHTTPRequest/defines.h#L20-L30
 
 ---
 ---
@@ -196,7 +199,7 @@ https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/19ea1ad318800e695da4
 ```
 Start AsyncHTTPRequest on RASPBERRY_PI_PICO_W
 AsyncTCP_RP2040W v1.1.0
-AsyncHTTPRequest_RP2040W v1.1.1
+AsyncHTTPRequest_RP2040W v1.2.0
 Connecting to SSID: HueNet1
 SSID: HueNet1
 Local IP Address: 192.168.2.77
@@ -204,18 +207,18 @@ Request sent
 
 **************************************
 abbreviation: EDT
-client_ip: aaa.bbb.ccc.ddd
-datetime: 2022-10-19T00:56:39.919053-04:00
-day_of_week: 3
-day_of_year: 292
+client_ip: 65.110.220.219
+datetime: 2022-10-20T23:10:21.133081-04:00
+day_of_week: 4
+day_of_year: 293
 dst: true
 dst_from: 2022-03-13T07:00:00+00:00
 dst_offset: 3600
 dst_until: 2022-11-06T06:00:00+00:00
 raw_offset: -18000
 timezone: America/Toronto
-unixtime: 1666155399
-utc_datetime: 2022-10-19T04:56:39.919053+00:00
+unixtime: 1666321821
+utc_datetime: 2022-10-21T03:10:21.133081+00:00
 utc_offset: -04:00
 week_number: 42
 **************************************
@@ -228,7 +231,7 @@ week_number: 42
 ```
 Start AsyncDweetPOST on RASPBERRY_PI_PICO_W with RP2040W CYW43439 WiFi
 AsyncTCP_RP2040W v1.1.0
-AsyncHTTPRequest_RP2040W v1.1.0
+AsyncHTTPRequest_RP2040W v1.2.0
 Connecting to SSID: HueNet1
 SSID: HueNet1
 Local IP Address: 192.168.2.180
@@ -250,7 +253,7 @@ Actual value: 88
 ```
 Start AsyncWebClientRepeating on RASPBERRY_PI_PICO_W
 AsyncTCP_RP2040W v1.1.0
-AsyncHTTPRequest_RP2040W v1.1.0
+AsyncHTTPRequest_RP2040W v1.2.0
 Connecting to SSID: HueNet1
 SSID: HueNet1
 Local IP Address: 192.168.2.180
@@ -314,8 +317,8 @@ You can also change the debugging level from 0 to 4
 #define ASYNC_HTTP_RP2040W_DEBUG_PORT           Serial
 
 // Use from 0 to 4. Higher number, more debugging messages and memory usage.
-#define _ASYNCTCP_RP2040W_LOGLEVEL_             2
-#define _ASYNC_HTTP_LOGLEVEL_                   2
+#define _ASYNCTCP_RP2040W_LOGLEVEL_             1
+#define _ASYNC_HTTP_LOGLEVEL_                   1
 ```
 
 ---
