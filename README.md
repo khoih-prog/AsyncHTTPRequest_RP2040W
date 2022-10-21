@@ -181,13 +181,13 @@ Please take a look at other examples, as well.
 
 #### 1. File [AsyncHTTPRequest.ino](examples/AsyncHTTPRequest/AsyncHTTPRequest.ino)
 
-https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/baaf7b022bd3c1372c1d5bd6ba81b4ccc9099b41/examples/AsyncHTTPRequest/AsyncHTTPRequest.ino#L41-L185
+https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/19d5b540f4ed6c967b6f82a37689f0f4c62a7059/examples/AsyncHTTPRequest/AsyncHTTPRequest.ino#L41-L185
 
 ---
 
 #### 2. File [defines.h](examples/AsyncHTTPRequest/defines.h)
 
-https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/baaf7b022bd3c1372c1d5bd6ba81b4ccc9099b41/examples/AsyncHTTPRequest/defines.h#L20-L30
+https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/19d5b540f4ed6c967b6f82a37689f0f4c62a7059/examples/AsyncHTTPRequest/defines.h#L20-L30
 
 ---
 ---
@@ -199,7 +199,7 @@ https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/baaf7b022bd3c1372c1d
 ```
 Start AsyncHTTPRequest on RASPBERRY_PI_PICO_W
 AsyncTCP_RP2040W v1.1.0
-AsyncHTTPRequest_RP2040W v1.2.0
+AsyncHTTPRequest_RP2040W v1.2.1
 Connecting to SSID: HueNet1
 SSID: HueNet1
 Local IP Address: 192.168.2.77
@@ -231,7 +231,7 @@ week_number: 42
 ```
 Start AsyncDweetPOST on RASPBERRY_PI_PICO_W with RP2040W CYW43439 WiFi
 AsyncTCP_RP2040W v1.1.0
-AsyncHTTPRequest_RP2040W v1.2.0
+AsyncHTTPRequest_RP2040W v1.2.1
 Connecting to SSID: HueNet1
 SSID: HueNet1
 Local IP Address: 192.168.2.180
@@ -253,7 +253,7 @@ Actual value: 88
 ```
 Start AsyncWebClientRepeating on RASPBERRY_PI_PICO_W
 AsyncTCP_RP2040W v1.1.0
-AsyncHTTPRequest_RP2040W v1.2.0
+AsyncHTTPRequest_RP2040W v1.2.1
 Connecting to SSID: HueNet1
 SSID: HueNet1
 Local IP Address: 192.168.2.180
@@ -353,6 +353,8 @@ Submit issues to: [AsyncHTTPRequest_RP2040W issues](https://github.com/khoih-pro
  5. Optimize library code by using `reference-passing` instead of `value-passing`
  6. Fix long timeout if using `IPAddress`
  7. Not try to reconnect to the same `host:port` after connected
+ 8. Fix bug of wrong `reqStates`
+ 
  
 ---
 ---
