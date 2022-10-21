@@ -16,7 +16,7 @@
   You should have received a copy of the GNU General Public License along with this program.  
   If not, see <https://www.gnu.org/licenses/> 
  
-  Version: 1.2.0
+  Version: 1.2.1
   
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -25,6 +25,7 @@
   1.1.0   K Hoang      01/09/2022 Fix bug. Improve debug messages. Optimize code
   1.1.1   K Hoang      19/10/2022 Not try to reconnect to the same host:port after connected
   1.2.0   K Hoang      21/10/2022 Fix bug. Clean up
+  1.2.1   K Hoang      22/10/2022 Fix bug of wrong reqStates
  *****************************************************************************************************************************/
 
 #pragma once
@@ -72,13 +73,13 @@
 
 ////////////////////////////////////////
 
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION            "AsyncHTTPRequest_RP2040W v1.2.0"
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION            "AsyncHTTPRequest_RP2040W v1.2.1"
 
 #define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MAJOR      1
 #define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MINOR      2
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_PATCH      0
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_PATCH      1
 
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_INT        1002000
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_INT        1002001
 
 ////////////////////////////////////////
 
@@ -231,7 +232,9 @@ class xbuf: public Print
     DEBUG_IOTA_PORT.printf("Debug(%3ld): ", millis()-_requestStartTime);\
     DEBUG_IOTA_PORT.printf_P(PSTR(format),##__VA_ARGS__);}
 
-#define DEFAULT_RX_TIMEOUT 3                    // Seconds for timeout
+#if !defined(DEFAULT_RX_TIMEOUT)
+  #define DEFAULT_RX_TIMEOUT         3          // Seconds for timeout
+#endif
 
 ////////////////////////////////////////
 
@@ -276,9 +279,6 @@ class AsyncHTTPRequest
       SAFE_DELETE_ARRAY(name)
       SAFE_DELETE_ARRAY(value)
       SAFE_DELETE(next)
-      //delete[] name;
-      //delete[] value;
-      //delete next;
     }
   };
 
@@ -314,7 +314,6 @@ class AsyncHTTPRequest
     AsyncHTTPRequest();
     ~AsyncHTTPRequest();
 
-
     //External functions in typical order of use:
     
     ////////////////////////////////////////
@@ -324,7 +323,6 @@ class AsyncHTTPRequest
 
     bool        open(const char* /*GET/POST*/, const char* URL);        // Initiate a request
     void        onReadyStateChange(readyStateChangeCB, void* arg = 0);  // Optional event handler for ready state change
-    // or you can simply poll readyState()
     void        setTimeout(int);                                        // overide default timeout (seconds)
 
     void        setReqHeader(const char* name, const char* value);      // add a request header
@@ -358,7 +356,7 @@ class AsyncHTTPRequest
     char*       responseLongText();                                     // response long (whole* or partial* as string)
     
     size_t      responseRead(uint8_t* buffer, size_t len);              // Read response into buffer
-    uint32_t    elapsedTime();                                          // Elapsed time of in progress transaction or last completed (ms)
+    uint32_t    elapsedTime();                                          // Elapsed time of transaction or last completed (ms)
     String      version();                                              // Version of AsyncHTTPRequest
     
     ////////////////////////////////////////

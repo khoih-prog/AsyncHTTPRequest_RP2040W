@@ -16,7 +16,7 @@
   You should have received a copy of the GNU General Public License along with this program.  
   If not, see <https://www.gnu.org/licenses/> 
  
-  Version: 1.2.0
+  Version: 1.2.1
   
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -25,6 +25,7 @@
   1.1.0   K Hoang      01/09/2022 Fix bug. Improve debug messages. Optimize code
   1.1.1   K Hoang      19/10/2022 Not try to reconnect to the same host:port after connected
   1.2.0   K Hoang      21/10/2022 Fix bug. Clean up
+  1.2.1   K Hoang      22/10/2022 Fix bug of wrong reqStates
  *****************************************************************************************************************************/
  
 #pragma once
@@ -154,6 +155,7 @@ size_t xbuf::read(uint8_t* buf, const size_t len)
     size_t supply = (_offset + _used) > _segSize ? _segSize - _offset : _used;
     size_t demand = len - read;
     size_t chunk = supply < demand ? supply : demand;
+    
     memcpy(buf + read, _head->data + _offset, chunk);
     _offset += chunk;
     _used -= chunk;
@@ -405,7 +407,7 @@ void xbuf::addSeg()
     _tail = _head = (xseg*) new uint32_t[_segSize / 4 + 1];
 
     if (_tail == NULL)
-      AHTTP_LOGDEBUG(("xbuf::addSeg: NULL tail"));
+      AHTTP_LOGERROR(("xbuf::addSeg: NULL tail"));
   }
 
   if (_tail)
@@ -450,7 +452,6 @@ AsyncHTTPRequest::~AsyncHTTPRequest()
 {
   if (_client)
     _client->close(true);
-
 
   SAFE_DELETE(_URL)
   SAFE_DELETE(_headers)
@@ -1220,12 +1221,9 @@ size_t  AsyncHTTPRequest::_send()
     return 0;
 
   if ( ! _client->connected())
-  {
+  {   
     // KH fix bug https://github.com/khoih-prog/AsyncHTTPRequest_Generic/issues/38
-    _HTTPcode = HTTPCODE_NOT_CONNECTED;
-    _setReadyState(readyStateDone);
-
-    ///////////////////////////
+    _timeout = DEFAULT_RX_TIMEOUT;
 
     return 0;
   }
