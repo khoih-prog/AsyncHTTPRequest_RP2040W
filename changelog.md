@@ -11,6 +11,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+  * [Release v1.2.1](#Release-v121)
   * [Release v1.2.0](#Release-v120)
   * [Release v1.1.1](#Release-v111)
   * [Release v1.1.0](#Release-v110)
