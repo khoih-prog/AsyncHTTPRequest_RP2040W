@@ -16,7 +16,7 @@
   You should have received a copy of the GNU General Public License along with this program.  
   If not, see <https://www.gnu.org/licenses/> 
  
-  Version: 1.1.1
+  Version: 1.2.0
   
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -24,6 +24,7 @@
   1.0.1   K Hoang      15/08/2022 Fix bug in examples
   1.1.0   K Hoang      01/09/2022 Fix bug. Improve debug messages. Optimize code
   1.1.1   K Hoang      19/10/2022 Not try to reconnect to the same host:port after connected
+  1.2.0   K Hoang      21/10/2022 Fix bug. Clean up
  *****************************************************************************************************************************/
 
 #pragma once

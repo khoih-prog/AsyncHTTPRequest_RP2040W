@@ -11,6 +11,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+  * [Release v1.2.0](#Release-v120)
   * [Release v1.1.1](#Release-v111)
   * [Release v1.1.0](#Release-v110)
   * [Release v1.0.1](#Release-v101)
@@ -20,6 +21,11 @@
 ---
 
 ## Changelog
+
+### Release v1.2.0
+
+1. Fix bug. 
+2. Clean up
 
 ### Release v1.1.1
 

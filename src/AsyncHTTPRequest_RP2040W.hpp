@@ -16,7 +16,7 @@
   You should have received a copy of the GNU General Public License along with this program.  
   If not, see <https://www.gnu.org/licenses/> 
  
-  Version: 1.1.1
+  Version: 1.2.0
   
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -24,12 +24,15 @@
   1.0.1   K Hoang      15/08/2022 Fix bug in examples
   1.1.0   K Hoang      01/09/2022 Fix bug. Improve debug messages. Optimize code
   1.1.1   K Hoang      19/10/2022 Not try to reconnect to the same host:port after connected
+  1.2.0   K Hoang      21/10/2022 Fix bug. Clean up
  *****************************************************************************************************************************/
 
 #pragma once
 
 #ifndef ASYNC_HTTP_REQUEST_RP2040W_HPP
 #define ASYNC_HTTP_REQUEST_RP2040W_HPP
+
+////////////////////////////////////////
 
 #if ( defined(ARDUINO_RASPBERRY_PI_PICO_W) )
       
@@ -56,29 +59,41 @@
     
 #endif
 
+////////////////////////////////////////
+
 #include <Arduino.h>
+
+////////////////////////////////////////
 
 // Default WiFi if not specified
 #if !defined(SHIELD_TYPE)
   #define SHIELD_TYPE           "RP2040W CYW43439 WiFi"
 #endif
 
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION            "AsyncHTTPRequest_RP2040W v1.1.1"
+////////////////////////////////////////
+
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION            "AsyncHTTPRequest_RP2040W v1.2.0"
 
 #define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MAJOR      1
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MINOR      1
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_PATCH      1
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MINOR      2
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_PATCH      0
 
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_INT        1001001
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_INT        1002000
+
+////////////////////////////////////////
 
 #include "AsyncTCP_RP2040W.h"
 
 #include "AsyncHTTPRequest_RP2040W_Debug.h"
 
+////////////////////////////////////////
+
 #define MUTEX_LOCK_NR
 #define MUTEX_LOCK(returnVal)
 #define _AHTTP_lock
 #define _AHTTP_unlock
+
+////////////////////////////////////////
 
 #ifndef DEBUG_IOTA_PORT
   #define DEBUG_IOTA_PORT Serial
@@ -90,20 +105,32 @@
   #define DEBUG_IOTA_HTTP_SET     false
 #endif
 
+////////////////////////////////////////
+
 // KH add
 #define SAFE_DELETE(object)         if (object) { delete object;}
 #define SAFE_DELETE_ARRAY(object)   if (object) { delete[] object;}
 
+#define ASYNC_HTTP_PREFIX         "HTTP://"
+#define ASYNC_HTTP_PORT           80
+
+#define ASYNC_HTTPS_PREFIX        "HTTPS://"
+#define ASYNC_HTTPS_PORT          443
+
+////////////////////////////////////////
+
 #include <avr/pgmspace.h>
 
 // Merge xbuf
-////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////
 
 struct xseg 
 {
   xseg    *next;
   uint8_t data[];
 };
+
+////////////////////////////////////////
 
 class xbuf: public Print 
 {
@@ -198,13 +225,15 @@ class xbuf: public Print
 
 };
 
-////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////
 
 #define DEBUG_HTTP(format,...)  if(_debug){\
     DEBUG_IOTA_PORT.printf("Debug(%3ld): ", millis()-_requestStartTime);\
     DEBUG_IOTA_PORT.printf_P(PSTR(format),##__VA_ARGS__);}
 
 #define DEFAULT_RX_TIMEOUT 3                    // Seconds for timeout
+
+////////////////////////////////////////
 
 #define HTTPCODE_CONNECTION_REFUSED  (-1)
 #define HTTPCODE_SEND_HEADER_FAILED  (-2)
@@ -218,6 +247,8 @@ class xbuf: public Print
 #define HTTPCODE_STREAM_WRITE        (-10)
 #define HTTPCODE_TIMEOUT             (-11)
 
+////////////////////////////////////////
+
 typedef enum
 {
   readyStateUnsent      = 0,            // Client created, open not yet called
@@ -227,53 +258,57 @@ typedef enum
   readyStateDone        = 4             // Request complete, all data available.
 } reqStates;
     
+////////////////////////////////////////
+
 class AsyncHTTPRequest
 {
-    struct header
+  struct header
+  {
+    header*   next;
+    char*     name;
+    char*     value;
+    
+    header(): next(nullptr), name(nullptr), value(nullptr)
+    {};
+    
+    ~header() 
     {
-      header*   next;
-      char*     name;
-      char*     value;
-      
-      header(): next(nullptr), name(nullptr), value(nullptr)
-      {};
-      
-      ~header() 
-      {
-        SAFE_DELETE_ARRAY(name)
-        SAFE_DELETE_ARRAY(value)
-        SAFE_DELETE(next)
-        //delete[] name;
-        //delete[] value;
-        //delete next;
-      }
-    };
- 
-    struct  URL 
-    {
-      char     *buffer;
-      char    *scheme;
-      char    *host;
-      int     port;
-      char    *path;
-      char    *query;
-      
-      URL():  buffer(nullptr), scheme(nullptr), host(nullptr),
-              port(80), path(nullptr), query(nullptr)
-      {};
-        
-      ~URL()
-      {
-        SAFE_DELETE_ARRAY(buffer)
-        SAFE_DELETE_ARRAY(scheme)
-        SAFE_DELETE_ARRAY(host)
-        SAFE_DELETE_ARRAY(path)
-        SAFE_DELETE_ARRAY(query)
-      }
-    };
+      SAFE_DELETE_ARRAY(name)
+      SAFE_DELETE_ARRAY(value)
+      SAFE_DELETE(next)
+      //delete[] name;
+      //delete[] value;
+      //delete next;
+    }
+  };
 
-    typedef std::function<void(void*, AsyncHTTPRequest*, int readyState)> readyStateChangeCB;
-    typedef std::function<void(void*, AsyncHTTPRequest*, size_t available)> onDataCB;
+  struct  URL 
+  {
+    char     *buffer;
+    char    *scheme;
+    char    *host;
+    int     port;
+    char    *path;
+    char    *query;
+    
+    URL():  buffer(nullptr), scheme(nullptr), host(nullptr),
+            port(80), path(nullptr), query(nullptr)
+    {};
+      
+    ~URL()
+    {
+      SAFE_DELETE_ARRAY(buffer)
+      SAFE_DELETE_ARRAY(scheme)
+      SAFE_DELETE_ARRAY(host)
+      SAFE_DELETE_ARRAY(path)
+      SAFE_DELETE_ARRAY(query)
+    }
+  };
+
+  typedef std::function<void(void*, AsyncHTTPRequest*, int readyState)> readyStateChangeCB;
+  typedef std::function<void(void*, AsyncHTTPRequest*, size_t available)> onDataCB;
+
+  ////////////////////////////////////////
 
   public:
     AsyncHTTPRequest();
@@ -281,7 +316,9 @@ class AsyncHTTPRequest
 
 
     //External functions in typical order of use:
-    //__________________________________________________________________________________________________________*/
+    
+    ////////////////////////////////////////
+
     void        setDebug(bool);                                         // Turn debug message on/off
     bool        debug();                                                // is debug on or off?
 
@@ -323,19 +360,28 @@ class AsyncHTTPRequest
     size_t      responseRead(uint8_t* buffer, size_t len);              // Read response into buffer
     uint32_t    elapsedTime();                                          // Elapsed time of in progress transaction or last completed (ms)
     String      version();                                              // Version of AsyncHTTPRequest
-    //___________________________________________________________________________________________________________________________________
+    
+    ////////////////////////////////////////
+
 
   private:
 
     bool _requestReadyToSend;
-    //////
     
-    typedef enum  { HTTPmethodGET, HTTPmethodPOST, HTTPmethodPUT, HTTPmethodPATCH, HTTPmethodDELETE, HTTPmethodHEAD, HTTPmethodMAX } HTTPmethod;
+    typedef enum  
+    { 
+      HTTPmethodGET, 
+      HTTPmethodPOST, 
+      HTTPmethodPUT, 
+      HTTPmethodPATCH, 
+      HTTPmethodDELETE, 
+      HTTPmethodHEAD, 
+      HTTPmethodMAX 
+    } HTTPmethod;
     
     HTTPmethod _HTTPmethod;
     
     const char* _HTTPmethodStringwithSpace[HTTPmethodMAX] = {"GET ", "POST ", "PUT ", "PATCH ", "DELETE ", "HEAD "};
-    //////
     
     reqStates       _readyState;
 
@@ -386,5 +432,7 @@ class AsyncHTTPRequest
     void        _onPoll(AsyncClient*);
     bool        _collectHeaders();
 };
+
+////////////////////////////////////////
 
 #endif    // ASYNC_HTTP_REQUEST_RP2040W_HPP
