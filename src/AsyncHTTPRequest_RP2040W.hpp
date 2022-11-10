@@ -16,8 +16,8 @@
   You should have received a copy of the GNU General Public License along with this program.  
   If not, see <https://www.gnu.org/licenses/> 
  
-  Version: 1.2.1
-  
+  Version: 1.2.2
+
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      14/08/2022 Initial coding for RP2040W with CYW43439 WiFi
@@ -26,6 +26,7 @@
   1.1.1   K Hoang      19/10/2022 Not try to reconnect to the same host:port after connected
   1.2.0   K Hoang      21/10/2022 Fix bug. Clean up
   1.2.1   K Hoang      22/10/2022 Fix bug of wrong reqStates
+  1.2.1   K Hoang      10/11/2022 Default to reconnect to the same host:port after connected for new HTTP sites. Fix bug
  *****************************************************************************************************************************/
 
 #pragma once
@@ -73,19 +74,26 @@
 
 ////////////////////////////////////////
 
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION            "AsyncHTTPRequest_RP2040W v1.2.1"
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION            "AsyncHTTPRequest_RP2040W v1.2.2"
 
 #define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MAJOR      1
 #define ASYNC_HTTP_REQUEST_RP2040W_VERSION_MINOR      2
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_PATCH      1
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_PATCH      2
 
-#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_INT        1002001
+#define ASYNC_HTTP_REQUEST_RP2040W_VERSION_INT        1002002
 
 ////////////////////////////////////////
 
 #include "AsyncTCP_RP2040W.h"
 
 #include "AsyncHTTPRequest_RP2040W_Debug.h"
+
+////////////////////////////////////////
+
+#if !defined(NOT_SEND_HEADER_AFTER_CONNECTED)
+	// Default is false
+	#define NOT_SEND_HEADER_AFTER_CONNECTED				false
+#endif
 
 ////////////////////////////////////////
 

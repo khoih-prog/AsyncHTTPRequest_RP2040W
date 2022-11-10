@@ -11,6 +11,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+  * [Release v1.2.2](#Release-v122)
   * [Release v1.2.1](#Release-v121)
   * [Release v1.2.0](#Release-v120)
   * [Release v1.1.1](#Release-v111)
@@ -22,6 +23,12 @@
 ---
 
 ## Changelog
+
+### Release v1.2.2
+
+1. Default to reconnect to the same `host:port` after connected for new HTTP sites. Check [Host/Headers not always sent with 1.10.1 #44](https://github.com/khoih-prog/AsyncHTTPRequest_Generic/issues/44)
+2. Fix bug
+3. Use `allman astyle` and add `utils`
 
 ### Release v1.2.1
 

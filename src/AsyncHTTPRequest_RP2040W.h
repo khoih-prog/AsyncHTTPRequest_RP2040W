@@ -1,23 +1,23 @@
 /****************************************************************************************************************************
   AsyncHTTPRequest_RP2040W.h
-  
+
   For RP2040W with CYW43439 WiFi
-     
+
   AsyncHTTPRequest_RP2040W is a library for the RP2040W with CYW43439 WiFi
-  
+
   Based on and modified from asyncHTTPrequest Library (https://github.com/boblemaire/asyncHTTPrequest)
   Built by Khoi Hoang https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W
-  
+
   Copyright (C) <2018>  <Bob Lemaire, IoTaWatt, Inc.>
-  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
   as published bythe Free Software Foundation, either version 3 of the License, or (at your option) any later version.
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  You should have received a copy of the GNU General Public License along with this program.  
-  If not, see <https://www.gnu.org/licenses/> 
- 
-  Version: 1.2.1
-  
+  You should have received a copy of the GNU General Public License along with this program.
+  If not, see <https://www.gnu.org/licenses/>
+
+  Version: 1.2.2
+
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      14/08/2022 Initial coding for RP2040W with CYW43439 WiFi
@@ -26,6 +26,7 @@
   1.1.1   K Hoang      19/10/2022 Not try to reconnect to the same host:port after connected
   1.2.0   K Hoang      21/10/2022 Fix bug. Clean up
   1.2.1   K Hoang      22/10/2022 Fix bug of wrong reqStates
+  1.2.1   K Hoang      10/11/2022 Default to reconnect to the same host:port after connected for new HTTP sites. Fix bug
  *****************************************************************************************************************************/
 
 #pragma once

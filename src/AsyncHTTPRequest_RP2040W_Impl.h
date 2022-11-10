@@ -1,23 +1,23 @@
 /****************************************************************************************************************************
   AsyncHTTPRequest_RP2040W_Impl.h
-  
+
   For RP2040W with CYW43439 WiFi
-     
+
   AsyncHTTPRequest_RP2040W is a library for the RP2040W with CYW43439 WiFi
-  
+
   Based on and modified from asyncHTTPrequest Library (https://github.com/boblemaire/asyncHTTPrequest)
   Built by Khoi Hoang https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W
-  
+
   Copyright (C) <2018>  <Bob Lemaire, IoTaWatt, Inc.>
-  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
   as published bythe Free Software Foundation, either version 3 of the License, or (at your option) any later version.
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  You should have received a copy of the GNU General Public License along with this program.  
-  If not, see <https://www.gnu.org/licenses/> 
- 
-  Version: 1.2.1
-  
+  You should have received a copy of the GNU General Public License along with this program.
+  If not, see <https://www.gnu.org/licenses/>
+
+  Version: 1.2.2
+
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
   1.0.0   K Hoang      14/08/2022 Initial coding for RP2040W with CYW43439 WiFi
@@ -26,8 +26,9 @@
   1.1.1   K Hoang      19/10/2022 Not try to reconnect to the same host:port after connected
   1.2.0   K Hoang      21/10/2022 Fix bug. Clean up
   1.2.1   K Hoang      22/10/2022 Fix bug of wrong reqStates
+  1.2.1   K Hoang      10/11/2022 Default to reconnect to the same host:port after connected for new HTTP sites. Fix bug
  *****************************************************************************************************************************/
- 
+
 #pragma once
 
 #ifndef ASYNC_HTTP_REQUEST_RP2040W_IMPL_H
@@ -155,7 +156,7 @@ size_t xbuf::read(uint8_t* buf, const size_t len)
     size_t supply = (_offset + _used) > _segSize ? _segSize - _offset : _used;
     size_t demand = len - read;
     size_t chunk = supply < demand ? supply : demand;
-    
+
     memcpy(buf + read, _head->data + _offset, chunk);
     _offset += chunk;
     _used -= chunk;
@@ -438,7 +439,8 @@ void xbuf::remSeg()
 ////////////////////////////////////////
 ////////////////////////////////////////
 
-AsyncHTTPRequest::AsyncHTTPRequest(): _readyState(readyStateUnsent), _HTTPcode(0), _chunked(false), _debug(DEBUG_IOTA_HTTP_SET)
+AsyncHTTPRequest::AsyncHTTPRequest(): _readyState(readyStateUnsent), _HTTPcode(0), _chunked(false),
+  _debug(DEBUG_IOTA_HTTP_SET)
   , _timeout(DEFAULT_RX_TIMEOUT), _lastActivity(0), _requestStartTime(0), _requestEndTime(0), _URL(nullptr)
   , _connectedHost(nullptr), _connectedPort(-1), _client(nullptr), _contentLength(0), _contentRead(0)
   , _readyStateChangeCB(nullptr), _readyStateChangeCBarg(nullptr), _onDataCB(nullptr), _onDataCBarg(nullptr)
@@ -550,25 +552,38 @@ bool  AsyncHTTPRequest::open(const char* method, const char* URL)
     return false;
   }
 
+#if NOT_SEND_HEADER_AFTER_CONNECTED
+
   if ( _client && _client->connected() )
   {
     if ( (strcmp(_URL->host, _connectedHost) == 0) && (_URL->port == _connectedPort) )
     {
       AHTTP_LOGINFO(F("open: already connected"));
-      
+
       _lastActivity = millis();
-    
+
       _requestReadyToSend = true;
-        
+
       return _connect();
     }
     else
-    { 
+    {
       AHTTP_LOGINFO(F("open: not connected: different host or port"));
-      
+
       return false;
     }
   }
+
+#else
+
+  if ( _client && _client->connected() && (strcmp(_URL->host, _connectedHost) != 0 || _URL->port != _connectedPort))
+  {
+    AHTTP_LOGERROR(F("open: not connected"));
+
+    return false;
+  }
+
+#endif
 
   char* hostName = new char[strlen(_URL->host) + 10];
 
@@ -616,7 +631,7 @@ bool  AsyncHTTPRequest::send()
   if (!_requestReadyToSend)
   {
     AHTTP_LOGERROR(CANT_SEND_BAD_REQUEST);
-    
+
     return false;
   }
 
@@ -639,7 +654,7 @@ bool AsyncHTTPRequest::send(const String& body)
   if (!_requestReadyToSend)
   {
     AHTTP_LOGERROR(CANT_SEND_BAD_REQUEST);
-    
+
     return false;
   }
 
@@ -669,7 +684,7 @@ bool  AsyncHTTPRequest::send(const char* body)
   if (!_requestReadyToSend)
   {
     AHTTP_LOGERROR(CANT_SEND_BAD_REQUEST);
-    
+
     return false;
   }
 
@@ -699,7 +714,7 @@ bool  AsyncHTTPRequest::send(const uint8_t* body, size_t len)
   if (!_requestReadyToSend)
   {
     AHTTP_LOGERROR(CANT_SEND_BAD_REQUEST);
-    
+
     return false;
   }
 
@@ -729,7 +744,7 @@ bool AsyncHTTPRequest::send(xbuf* body, size_t len)
   if (!_requestReadyToSend)
   {
     AHTTP_LOGERROR(CANT_SEND_BAD_REQUEST);
-    
+
     return false;
   }
 
@@ -791,71 +806,163 @@ String AsyncHTTPRequest::responseHTTPString()
   {
     case 0:
       return ("OK");
+
     case HTTPCODE_CONNECTION_REFUSED:
       return ("CONNECTION_REFUSED");
+
     case HTTPCODE_SEND_HEADER_FAILED:
       return ("SEND_HEADER_FAILED");
+
     case HTTPCODE_SEND_PAYLOAD_FAILED:
       return ("SEND_PAYLOAD_FAILED");
+
     case HTTPCODE_NOT_CONNECTED:
       return ("NOT_CONNECTED");
+
     case HTTPCODE_CONNECTION_LOST:
       return ("CONNECTION_LOST");
+
     case HTTPCODE_NO_STREAM:
       return ("NO_STREAM");
+
     case HTTPCODE_NO_HTTP_SERVER:
       return ("NO_HTTP_SERVER");
+
     case HTTPCODE_TOO_LESS_RAM:
       return ("TOO_LESS_RAM");
+
     case HTTPCODE_ENCODING:
       return ("ENCODING");
+
     case HTTPCODE_STREAM_WRITE:
       return ("STREAM_WRITE");
+
     case HTTPCODE_TIMEOUT:
       return ("TIMEOUT");
 
     // HTTP positive code
-    case 100: return ("Continue");
-    case 101: return ("Switching Protocols");
-    case 200: return ("HTTP OK");
-    case 201: return ("Created");
-    case 202: return ("Accepted");
-    case 203: return ("Non-Authoritative Information");
-    case 204: return ("No Content");
-    case 205: return ("Reset Content");
-    case 206: return ("Partial Content");
-    case 300: return ("Multiple Choices");
-    case 301: return ("Moved Permanently");
-    case 302: return ("Found");
-    case 303: return ("See Other");
-    case 304: return ("Not Modified");
-    case 305: return ("Use Proxy");
-    case 307: return ("Temporary Redirect");
-    case 400: return ("Bad Request");
-    case 401: return ("Unauthorized");
-    case 402: return ("Payment Required");
-    case 403: return ("Forbidden");
-    case 404: return ("Not Found");
-    case 405: return ("Method Not Allowed");
-    case 406: return ("Not Acceptable");
-    case 407: return ("Proxy Authentication Required");
-    case 408: return ("Request Time-out");
-    case 409: return ("Conflict");
-    case 410: return ("Gone");
-    case 411: return ("Length Required");
-    case 412: return ("Precondition Failed");
-    case 413: return ("Request Entity Too Large");
-    case 414: return ("Request-URI Too Large");
-    case 415: return ("Unsupported Media Type");
-    case 416: return ("Requested range not satisfiable");
-    case 417: return ("Expectation Failed");
-    case 500: return ("Internal Server Error");
-    case 501: return ("Not Implemented");
-    case 502: return ("Bad Gateway");
-    case 503: return ("Service Unavailable");
-    case 504: return ("Gateway Time-out");
-    case 505: return ("HTTP Version not supported");
-    default:  return "UNKNOWN";
+    case 100:
+      return ("Continue");
+
+    case 101:
+      return ("Switching Protocols");
+
+    case 200:
+      return ("HTTP OK");
+
+    case 201:
+      return ("Created");
+
+    case 202:
+      return ("Accepted");
+
+    case 203:
+      return ("Non-Authoritative Information");
+
+    case 204:
+      return ("No Content");
+
+    case 205:
+      return ("Reset Content");
+
+    case 206:
+      return ("Partial Content");
+
+    case 300:
+      return ("Multiple Choices");
+
+    case 301:
+      return ("Moved Permanently");
+
+    case 302:
+      return ("Found");
+
+    case 303:
+      return ("See Other");
+
+    case 304:
+      return ("Not Modified");
+
+    case 305:
+      return ("Use Proxy");
+
+    case 307:
+      return ("Temporary Redirect");
+
+    case 400:
+      return ("Bad Request");
+
+    case 401:
+      return ("Unauthorized");
+
+    case 402:
+      return ("Payment Required");
+
+    case 403:
+      return ("Forbidden");
+
+    case 404:
+      return ("Not Found");
+
+    case 405:
+      return ("Method Not Allowed");
+
+    case 406:
+      return ("Not Acceptable");
+
+    case 407:
+      return ("Proxy Authentication Required");
+
+    case 408:
+      return ("Request Time-out");
+
+    case 409:
+      return ("Conflict");
+
+    case 410:
+      return ("Gone");
+
+    case 411:
+      return ("Length Required");
+
+    case 412:
+      return ("Precondition Failed");
+
+    case 413:
+      return ("Request Entity Too Large");
+
+    case 414:
+      return ("Request-URI Too Large");
+
+    case 415:
+      return ("Unsupported Media Type");
+
+    case 416:
+      return ("Requested range not satisfiable");
+
+    case 417:
+      return ("Expectation Failed");
+
+    case 500:
+      return ("Internal Server Error");
+
+    case 501:
+      return ("Not Implemented");
+
+    case 502:
+      return ("Bad Gateway");
+
+    case 503:
+      return ("Service Unavailable");
+
+    case 504:
+      return ("Gateway Time-out");
+
+    case 505:
+      return ("HTTP Version not supported");
+
+    default:
+      return "UNKNOWN";
   }
 }
 
@@ -1038,13 +1145,13 @@ bool  AsyncHTTPRequest::_parseURL(const String& url)
   if (_URL)
   {
     _URL->scheme = new char[strlen(ASYNC_HTTP_PREFIX) + 1];
-    
+
     if (! (_URL->scheme) )
       return false;
   }
   else
     return false;
-  
+
   strcpy(_URL->scheme, ASYNC_HTTP_PREFIX);
 
   if (url.substring(0, strlen(ASYNC_HTTP_PREFIX)).equalsIgnoreCase(ASYNC_HTTP_PREFIX))
@@ -1187,7 +1294,7 @@ bool   AsyncHTTPRequest::_buildRequest()
   _request->write(_HTTPmethodStringwithSpace[_HTTPmethod]);
   _request->write(_URL->path);
   _request->write(_URL->query);
-  
+
   _request->write(" HTTP/1.1\r\n");
 
   SAFE_DELETE(_URL)
@@ -1221,7 +1328,7 @@ size_t  AsyncHTTPRequest::_send()
     return 0;
 
   if ( ! _client->connected())
-  {   
+  {
     // KH fix bug https://github.com/khoih-prog/AsyncHTTPRequest_Generic/issues/38
     _timeout = DEFAULT_RX_TIMEOUT;
 
@@ -1240,19 +1347,19 @@ size_t  AsyncHTTPRequest::_send()
 
   size_t sent = 0;
 
-  #define MAX_CHUNK_SIZE       255
+#define MAX_CHUNK_SIZE       255
 
   uint8_t* temp = new uint8_t[MAX_CHUNK_SIZE + 1];
-  
+
   if (!temp)
     return 0;
 
   while (supply)
   {
     size_t chunk = supply < MAX_CHUNK_SIZE ? supply : MAX_CHUNK_SIZE;
-       
-    memset(temp, 0, MAX_CHUNK_SIZE + 1);    
-    supply  -= _request->read(temp, chunk);       
+
+    memset(temp, 0, MAX_CHUNK_SIZE + 1);
+    supply  -= _request->read(temp, chunk);
     sent    += _client->add((char*)temp, chunk);
   }
 
@@ -1263,14 +1370,15 @@ size_t  AsyncHTTPRequest::_send()
     SAFE_DELETE(_request)
 
     _request = nullptr;
-    
-    // KH fix crash bug
-    return 0;
+
+    AHTTP_LOGDEBUG("_send: _request->available() == 0 => _request = nullptr");
   }
 
   _client->send();
 
   _lastActivity = millis();
+
+  AHTTP_LOGDEBUG1("_send: _client->send() @ millis =", _lastActivity);
 
   return sent;
 }
@@ -1436,7 +1544,7 @@ void  AsyncHTTPRequest::_onDisconnect(AsyncClient* client)
     AHTTP_LOGDEBUG("_onDisconnect: HTTPCODE_CONNECTION_LOST");
     _HTTPcode = HTTPCODE_CONNECTION_LOST;
   }
-  
+
   SAFE_DELETE(_client)
 
   _client = nullptr;
