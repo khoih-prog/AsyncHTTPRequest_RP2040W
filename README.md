@@ -97,7 +97,7 @@ This library is based on, modified from:
 1. **RASPBERRY_PI_PICO_W with CYW43439 WiFi** using [**arduino-pico core v2.4.0+**](https://github.com/earlephilhower/arduino-pico)
 
 <p align="center">
-    <img src="https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/main/pics/RP2040W-pinout.svg">
+    <img src="https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/raw/main/pics/RP2040W-pinout.svg">
 </p>
 
 
@@ -107,7 +107,7 @@ This library is based on, modified from:
 ## Prerequisites
 
  1. [`Arduino IDE 1.8.19+` for Arduino](https://github.com/arduino/Arduino). [![GitHub release](https://img.shields.io/github/release/arduino/Arduino.svg)](https://github.com/arduino/Arduino/releases/latest)
- 2. [`Earle Philhower's arduino-pico core v2.6.1+`](https://github.com/earlephilhower/arduino-pico) for **RASPBERRY_PI_PICO_W with CYW43439 WiFi**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
+ 2. [`Earle Philhower's arduino-pico core v2.6.3+`](https://github.com/earlephilhower/arduino-pico) for **RASPBERRY_PI_PICO_W with CYW43439 WiFi**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
  3. [`AsyncTCP_RP2040W library v1.1.0+`](https://github.com/khoih-prog/AsyncTCP_RP2040W) for RASPBERRY_PI_PICO_W with CYW43439 WiFi. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/AsyncTCP_RP2040W.svg?)](https://www.ardu-badge.com/AsyncTCP_RP2040W)
 
 ---
@@ -181,13 +181,13 @@ Please take a look at other examples, as well.
 
 #### 1. File [AsyncHTTPRequest.ino](examples/AsyncHTTPRequest/AsyncHTTPRequest.ino)
 
-https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/19d5b540f4ed6c967b6f82a37689f0f4c62a7059/examples/AsyncHTTPRequest/AsyncHTTPRequest.ino#L41-L185
+https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/73cdc771d7613d2f09a43bf727abf14bf98b1b01/examples/AsyncHTTPRequest/AsyncHTTPRequest.ino#L41-L193
 
 ---
 
 #### 2. File [defines.h](examples/AsyncHTTPRequest/defines.h)
 
-https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/19d5b540f4ed6c967b6f82a37689f0f4c62a7059/examples/AsyncHTTPRequest/defines.h#L20-L30
+https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/73cdc771d7613d2f09a43bf727abf14bf98b1b01/examples/AsyncHTTPRequest/defines.h#L20-L30
 
 ---
 ---
@@ -199,28 +199,28 @@ https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/19d5b540f4ed6c967b6f
 ```
 Start AsyncHTTPRequest on RASPBERRY_PI_PICO_W
 AsyncTCP_RP2040W v1.1.0
-AsyncHTTPRequest_RP2040W v1.2.1
+AsyncHTTPRequest_RP2040W v1.2.2
 Connecting to SSID: HueNet1
 SSID: HueNet1
 Local IP Address: 192.168.2.77
 Request sent
 
 **************************************
-abbreviation: EDT
-client_ip: 65.110.220.219
-datetime: 2022-10-20T23:10:21.133081-04:00
+abbreviation: EST
+client_ip: aaa.bbb.ccc.ddd
+datetime: 2022-11-10T12:51:21.828792-05:00
 day_of_week: 4
-day_of_year: 293
-dst: true
-dst_from: 2022-03-13T07:00:00+00:00
-dst_offset: 3600
-dst_until: 2022-11-06T06:00:00+00:00
+day_of_year: 314
+dst: false
+dst_from: 
+dst_offset: 0
+dst_until: 
 raw_offset: -18000
 timezone: America/Toronto
-unixtime: 1666321821
-utc_datetime: 2022-10-21T03:10:21.133081+00:00
-utc_offset: -04:00
-week_number: 42
+unixtime: 1668102681
+utc_datetime: 2022-11-10T17:51:21.828792+00:00
+utc_offset: -05:00
+week_number: 45
 **************************************
 ```
 
@@ -231,7 +231,7 @@ week_number: 42
 ```
 Start AsyncDweetPOST on RASPBERRY_PI_PICO_W with RP2040W CYW43439 WiFi
 AsyncTCP_RP2040W v1.1.0
-AsyncHTTPRequest_RP2040W v1.2.1
+AsyncHTTPRequest_RP2040W v1.2.2
 Connecting to SSID: HueNet1
 SSID: HueNet1
 Local IP Address: 192.168.2.180
@@ -253,7 +253,7 @@ Actual value: 88
 ```
 Start AsyncWebClientRepeating on RASPBERRY_PI_PICO_W
 AsyncTCP_RP2040W v1.1.0
-AsyncHTTPRequest_RP2040W v1.2.1
+AsyncHTTPRequest_RP2040W v1.2.2
 Connecting to SSID: HueNet1
 SSID: HueNet1
 Local IP Address: 192.168.2.180
@@ -354,8 +354,10 @@ Submit issues to: [AsyncHTTPRequest_RP2040W issues](https://github.com/khoih-pro
  6. Fix long timeout if using `IPAddress`
  7. Not try to reconnect to the same `host:port` after connected
  8. Fix bug of wrong `reqStates`
- 
- 
+ 9. Default to reconnect to the same `host:port` after connected for new HTTP sites.
+10. Use `allman astyle` and add `utils`
+
+
 ---
 ---
 
