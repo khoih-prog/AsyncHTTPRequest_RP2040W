@@ -192,7 +192,7 @@ https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/73cdc771d7613d2f09a4
 ---
 ---
 
-### Debug Terminal Ouput Samples
+### Debug Terminal Output Samples
 
 #### 1. [AsyncHTTPRequest](examples/AsyncHTTPRequest) running on RASPBERRY_PI_PICO_W using CYW43439 WiFi
 

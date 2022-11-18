@@ -32,7 +32,7 @@
 
 ### Release v1.2.1
 
-1. Fix bug of wrong `reqStates`. Check [Release 1.9 breakes previously running code #39](https://github.com/khoih-prog/AsyncHTTPRequest_Generic/issues/39) and [Callback behaviour is buggy (ESP8266) #43](https://github.com/khoih-prog/AsyncHTTPRequest_Generic/issues/43)
+1. Fix bug of wrong `reqStates`. Check [Release 1.9 breaks previously running code #39](https://github.com/khoih-prog/AsyncHTTPRequest_Generic/issues/39) and [Callback behaviour is buggy (ESP8266) #43](https://github.com/khoih-prog/AsyncHTTPRequest_Generic/issues/43)
 2. Optional larger `DEFAULT_RX_TIMEOUT` from default 3s, for slower networks
 
 ### Release v1.2.0
