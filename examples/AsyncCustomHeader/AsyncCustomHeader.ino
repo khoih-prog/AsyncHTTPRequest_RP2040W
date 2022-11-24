@@ -41,137 +41,137 @@ int status = WL_IDLE_STATUS;
 
 void sendRequest()
 {
-	static bool requestOpenResult;
+  static bool requestOpenResult;
 
-	if (request.readyState() == readyStateUnsent || request.readyState() == readyStateDone)
-	{
-		Serial.println("\nSending GET Request to " + String(GET_ServerAddress));
+  if (request.readyState() == readyStateUnsent || request.readyState() == readyStateDone)
+  {
+    Serial.println("\nSending GET Request to " + String(GET_ServerAddress));
 
-		requestOpenResult = request.open("GET", GET_ServerAddress);
+    requestOpenResult = request.open("GET", GET_ServerAddress);
 
-		//request.setReqHeader("X-CUSTOM-HEADER", "custom_value");
-		if (requestOpenResult)
-		{
-			// Only send() if open() returns true, or crash
-			request.send();
-		}
-		else
-		{
-			Serial.println("Can't send bad request");
-		}
-	}
-	else
-	{
-		Serial.println("Can't send request");
-	}
+    //request.setReqHeader("X-CUSTOM-HEADER", "custom_value");
+    if (requestOpenResult)
+    {
+      // Only send() if open() returns true, or crash
+      request.send();
+    }
+    else
+    {
+      Serial.println("Can't send bad request");
+    }
+  }
+  else
+  {
+    Serial.println("Can't send request");
+  }
 }
 
 void requestCB(void *optParm, AsyncHTTPRequest *request, int readyState)
 {
-	(void) optParm;
+  (void) optParm;
 
-	if (readyState == readyStateDone)
-	{
-		AHTTP_LOGWARN(F("\n**************************************"));
-		AHTTP_LOGWARN1(F("Response Code = "), request->responseHTTPString());
+  if (readyState == readyStateDone)
+  {
+    AHTTP_LOGWARN(F("\n**************************************"));
+    AHTTP_LOGWARN1(F("Response Code = "), request->responseHTTPString());
 
-		if (request->responseHTTPcode() == 200)
-		{
-			Serial.println(F("\n**************************************"));
-			Serial.println(request->responseText());
-			Serial.println(F("**************************************"));
-		}
-	}
+    if (request->responseHTTPcode() == 200)
+    {
+      Serial.println(F("\n**************************************"));
+      Serial.println(request->responseText());
+      Serial.println(F("**************************************"));
+    }
+  }
 }
 
 void printWifiStatus()
 {
-	// print the SSID of the network you're attached to:
-	Serial.print("SSID: ");
-	Serial.println(WiFi.SSID());
+  // print the SSID of the network you're attached to:
+  Serial.print("SSID: ");
+  Serial.println(WiFi.SSID());
 
-	// print your board's IP address:
-	IPAddress ip = WiFi.localIP();
-	Serial.print("Local IP Address: ");
-	Serial.println(ip);
+  // print your board's IP address:
+  IPAddress ip = WiFi.localIP();
+  Serial.print("Local IP Address: ");
+  Serial.println(ip);
 }
 
 void setup()
 {
-	Serial.begin(115200);
+  Serial.begin(115200);
 
-	while (!Serial && millis() < 5000);
+  while (!Serial && millis() < 5000);
 
-	Serial.print("\nStart AsyncCustomHeader on ");
-	Serial.println(BOARD_NAME);
-	Serial.println(ASYNCTCP_RP2040W_VERSION);
-	Serial.println(ASYNC_HTTP_REQUEST_RP2040W_VERSION);
+  Serial.print("\nStart AsyncCustomHeader on ");
+  Serial.println(BOARD_NAME);
+  Serial.println(ASYNCTCP_RP2040W_VERSION);
+  Serial.println(ASYNC_HTTP_REQUEST_RP2040W_VERSION);
 
 #if defined(ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN)
 
-	if (ASYNC_HTTP_REQUEST_RP2040W_VERSION_INT < ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN)
-	{
-		Serial.print("Warning. Must use this example on Version equal or later than : ");
-		Serial.println(ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN);
-	}
+  if (ASYNC_HTTP_REQUEST_RP2040W_VERSION_INT < ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN)
+  {
+    Serial.print("Warning. Must use this example on Version equal or later than : ");
+    Serial.println(ASYNC_HTTP_REQUEST_RP2040W_VERSION_MIN);
+  }
 
 #endif
 
-	///////////////////////////////////
+  ///////////////////////////////////
 
-	// check for the WiFi module:
-	if (WiFi.status() == WL_NO_MODULE)
-	{
-		Serial.println("Communication with WiFi module failed!");
+  // check for the WiFi module:
+  if (WiFi.status() == WL_NO_MODULE)
+  {
+    Serial.println("Communication with WiFi module failed!");
 
-		// don't continue
-		while (true);
-	}
+    // don't continue
+    while (true);
+  }
 
-	Serial.print(F("Connecting to SSID: "));
-	Serial.println(ssid);
+  Serial.print(F("Connecting to SSID: "));
+  Serial.println(ssid);
 
-	status = WiFi.begin(ssid, pass);
+  status = WiFi.begin(ssid, pass);
 
-	delay(1000);
+  delay(1000);
 
-	// attempt to connect to WiFi network
-	while ( status != WL_CONNECTED)
-	{
-		delay(500);
+  // attempt to connect to WiFi network
+  while ( status != WL_CONNECTED)
+  {
+    delay(500);
 
-		// Connect to WPA/WPA2 network
-		status = WiFi.status();
-	}
+    // Connect to WPA/WPA2 network
+    status = WiFi.status();
+  }
 
-	printWifiStatus();
+  printWifiStatus();
 
-	///////////////////////////////////
+  ///////////////////////////////////
 
-	request.setDebug(false);
+  request.setDebug(false);
 
-	// 5s timeout
-	request.setTimeout(5);
+  // 5s timeout
+  request.setTimeout(5);
 
-	request.onReadyStateChange(requestCB);
+  request.onReadyStateChange(requestCB);
 }
 
 void sendRequestRepeat()
 {
-	static unsigned long sendRequest_timeout = 0;
+  static unsigned long sendRequest_timeout = 0;
 
 #define SEND_REQUEST_INTERVAL     60000L
 
-	// sendRequest every SEND_REQUEST_INTERVAL (60) seconds: we don't need to sendRequest frequently
-	if ((millis() > sendRequest_timeout) || (sendRequest_timeout == 0))
-	{
-		sendRequest();
+  // sendRequest every SEND_REQUEST_INTERVAL (60) seconds: we don't need to sendRequest frequently
+  if ((millis() > sendRequest_timeout) || (sendRequest_timeout == 0))
+  {
+    sendRequest();
 
-		sendRequest_timeout = millis() + SEND_REQUEST_INTERVAL;
-	}
+    sendRequest_timeout = millis() + SEND_REQUEST_INTERVAL;
+  }
 }
 
 void loop()
 {
-	sendRequestRepeat();
+  sendRequestRepeat();
 }

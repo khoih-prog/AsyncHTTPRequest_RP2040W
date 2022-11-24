@@ -21,7 +21,7 @@
 #define defines_h
 
 #if !( defined(ARDUINO_RASPBERRY_PI_PICO_W) )
-	#error For RASPBERRY_PI_PICO_W only
+  #error For RASPBERRY_PI_PICO_W only
 #endif
 
 char ssid[] = "your_ssid";        // your network SSID (name)
