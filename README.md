@@ -228,7 +228,7 @@ week_number: 5
 
 ---
 
-#### 2. [AsyncDweetPOST](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncDweetPOST) running on RASPBERRY_PI_PICO_W using CYW43439 WiFi
+#### 2. [AsyncDweetPost](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncDweetPost) running on RASPBERRY_PI_PICO_W using CYW43439 WiFi
 
 ```cpp
 Start AsyncDweetPOST on RASPBERRY_PI_PICO_W with RP2040W CYW43439 WiFi
