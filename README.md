@@ -28,13 +28,13 @@
   * [VS Code & PlatformIO](#vs-code--platformio)
 * [HOWTO Fix `Multiple Definitions` Linker Error](#howto-fix-multiple-definitions-linker-error) 
 * [Examples](#examples)
-  * [1. AsyncHTTPRequest](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncHTTPRequest)
-  * [2. AsyncCustomHeader](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncCustomHeader)
-  * [3. AsyncDweetGet](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncDweetGet)
-  * [4. AsyncDweetPost](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncDweetPost)
-  * [5. AsyncSimpleGET](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncSimpleGET)
-  * [6. AsyncWebClientRepeating](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncWebClientRepeating)
-  * [7. **multiFileProject**](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/multiFileProject)
+  * [1. AsyncHTTPRequest](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncHTTPRequest)
+  * [2. AsyncCustomHeader](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncCustomHeader)
+  * [3. AsyncDweetGet](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncDweetGet)
+  * [4. AsyncDweetPost](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncDweetPost)
+  * [5. AsyncSimpleGET](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncSimpleGET)
+  * [6. AsyncWebClientRepeating](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncWebClientRepeating)
+  * [7. **multiFileProject**](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/multiFileProject)
 * [Example AsyncHTTPRequest](#example-asynchttprequest)
   * [1. File AsyncHTTPRequest.ino](#1-file-asynchttprequestino)
   * [2. File defines.h](#2-file-definesh) 
@@ -156,7 +156,7 @@ in many files. But be sure to use the following `.h` file **in just 1 `.h`, `.cp
 #include "AsyncHTTPRequest_RP2040W.h"           //https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W
 ```
 
-Check the new [**multiFileProject** example](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/multiFileProject) for a `HOWTO` demo.
+Check the new [**multiFileProject** example](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/multiFileProject) for a `HOWTO` demo.
 
 Have a look at the discussion in [Different behaviour using the src_cpp or src_h lib #80](https://github.com/khoih-prog/ESPAsync_WiFiManager/discussions/80)
 
@@ -166,28 +166,28 @@ Have a look at the discussion in [Different behaviour using the src_cpp or src_h
 
 ### Examples
 
- 1. [AsyncHTTPRequest](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncHTTPRequest)
- 2. [AsyncCustomHeader](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncCustomHeader)
- 3. [AsyncDweetGet](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncDweetGet)
- 4. [AsyncDweetPost](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncDweetPost)
- 5. [AsyncSimpleGET](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncSimpleGET)
- 6. [AsyncWebClientRepeating](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncWebClientRepeating)
- 7. [multiFileProject](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/multiFileProject)
+ 1. [AsyncHTTPRequest](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncHTTPRequest)
+ 2. [AsyncCustomHeader](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncCustomHeader)
+ 3. [AsyncDweetGet](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncDweetGet)
+ 4. [AsyncDweetPost](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncDweetPost)
+ 5. [AsyncSimpleGET](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncSimpleGET)
+ 6. [AsyncWebClientRepeating](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncWebClientRepeating)
+ 7. [multiFileProject](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/multiFileProject)
     
     
 ---
 
-### Example [AsyncHTTPRequest](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncHTTPRequest)
+### Example [AsyncHTTPRequest](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncHTTPRequest)
 
 Please take a look at other examples, as well.
 
-#### 1. File [AsyncHTTPRequest.ino](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncHTTPRequest/AsyncHTTPRequest.ino)
+#### 1. File [AsyncHTTPRequest.ino](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncHTTPRequest/AsyncHTTPRequest.ino)
 
 https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/73cdc771d7613d2f09a43bf727abf14bf98b1b01/examples/AsyncHTTPRequest/AsyncHTTPRequest.ino#L41-L193
 
 ---
 
-#### 2. File [defines.h](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncHTTPRequest/defines.h)
+#### 2. File [defines.h](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncHTTPRequest/defines.h)
 
 https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/73cdc771d7613d2f09a43bf727abf14bf98b1b01/examples/AsyncHTTPRequest/defines.h#L20-L30
 
@@ -196,7 +196,7 @@ https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/blob/73cdc771d7613d2f09a4
 
 ### Debug Terminal Output Samples
 
-#### 1. [AsyncHTTPRequest](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncHTTPRequest) running on RASPBERRY_PI_PICO_W using CYW43439 WiFi
+#### 1. [AsyncHTTPRequest](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncHTTPRequest) running on RASPBERRY_PI_PICO_W using CYW43439 WiFi
 
 ```cpp
 Start AsyncHTTPRequest on RASPBERRY_PI_PICO_W
@@ -228,7 +228,7 @@ week_number: 5
 
 ---
 
-#### 2. [AsyncDweetPOST](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncDweetPOST) running on RASPBERRY_PI_PICO_W using CYW43439 WiFi
+#### 2. [AsyncDweetPOST](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncDweetPOST) running on RASPBERRY_PI_PICO_W using CYW43439 WiFi
 
 ```cpp
 Start AsyncDweetPOST on RASPBERRY_PI_PICO_W with RP2040W CYW43439 WiFi
@@ -250,7 +250,7 @@ Actual value: 88
 
 ---
 
-#### 3. [AsyncWebClientRepeating](https://github.com/khoih-prog/https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncWebClientRepeating) running on RASPBERRY_PI_PICO_W using CYW43439 WiFi
+#### 3. [AsyncWebClientRepeating](https://github.com/khoih-prog/AsyncHTTPRequest_RP2040W/tree/main/examples/AsyncWebClientRepeating) running on RASPBERRY_PI_PICO_W using CYW43439 WiFi
 
 ```cpp
 Start AsyncWebClientRepeating on RASPBERRY_PI_PICO_W
