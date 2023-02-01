@@ -16,7 +16,7 @@
   You should have received a copy of the GNU General Public License along with this program.
   If not, see <https://www.gnu.org/licenses/>
 
-  Version: 1.2.2
+  Version: 1.3.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -27,6 +27,7 @@
   1.2.0   K Hoang      21/10/2022 Fix bug. Clean up
   1.2.1   K Hoang      22/10/2022 Fix bug of wrong reqStates
   1.2.1   K Hoang      10/11/2022 Default to reconnect to the same host:port after connected for new HTTP sites. Fix bug
+  1.3.0   K Hoang      01/02/2023 Fix _parseURL() bug
  *****************************************************************************************************************************/
 
 #pragma once
@@ -1165,11 +1166,28 @@ bool  AsyncHTTPRequest::_parseURL(const String& url)
 
   int pathBeg = url.indexOf('/', hostBeg);
 
+  int hostEnd;
+  int portBeg;
+  
   if (pathBeg < 0)
-    return false;
+  {
+    if ( url.indexOf(':', hostBeg) < 0 )
+    {
+      // No port, just https://www.aaa.com
+      hostEnd = url.length();
+    }
+    else
+    {
+      // with port, https://www.aaa.com:443
+      hostEnd = url.indexOf(':', hostBeg);
+    }
+  }
+  else
+  {
+    hostEnd = pathBeg;
+  }
 
-  int hostEnd = pathBeg;
-  int portBeg = url.indexOf(':', hostBeg);
+  portBeg = url.indexOf(':', hostBeg);
 
   if (portBeg > 0 && portBeg < pathBeg)
   {
